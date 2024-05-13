@@ -2,7 +2,7 @@
 
 ## TASK：
 
-参考张泽民课题组(https://github.com/TangFei965/pan-NK)，整理单细胞测序数据分析流程代码。
+参考张泽民课题组(https://github.com/TangFei965/pan-NK)  ，整理单细胞测序数据分析流程代码。
 
 ## pipe info:
 
