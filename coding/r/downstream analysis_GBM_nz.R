@@ -3,11 +3,11 @@ setwd("E:/GitHub/scRNA-seq_GBM")
 library(Seurat)
 library(dplyr)
 
-# load data
+##########load data##########
 sc_dataset <- readRDS("data/seurat/tcells_rm_batch-1.rds")
 tmp <- sc_dataset
 
-# re-join layers after integration
+##########re-join layers after integration##########
 tmp[["RNA"]] <- JoinLayers(tmp[["RNA"]])
 tmp <- FindNeighbors(tmp, reduction = "integrated.rpca", dims = 1:30)
 tmp <- FindClusters(tmp, resolution = 0.8)
@@ -15,7 +15,7 @@ tmp <- RunUMAP(tmp, dims = 1:30, reduction = "integrated.rpca")
 DimPlot(tmp, reduction = "umap", split.by = "scissor", label.size = 6, label = T, pt.size = 1)
 saveRDS(tmp, file = "data/downstream/tcells_resolution=0.8.rds")
 
-# find markers
+##########find markers##########
 tmp <- readRDS("data/downstream/tcells_resolution=0.8.rds")
 tcells.markers <- FindAllMarkers(tmp, only.pos = T)
 tcells.markers %>%
