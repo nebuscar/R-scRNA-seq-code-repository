@@ -1,7 +1,6 @@
 library(Seurat)
-###########################################
 
-#options(Seurat.object.assay.version = 'v4')
+###########################################
 tcells <- readRDS("data/seurat/tcells_v5.rds")
 count_dataset <- table(tcells@meta.data$orig.ident)
 count_few <- count_dataset[count_dataset < 30]
