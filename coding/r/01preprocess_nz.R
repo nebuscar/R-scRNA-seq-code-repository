@@ -2,45 +2,67 @@ workdir = "your_work_directory"  # where you place the data and results
 setwd(workdir)
 library(Seurat)
 
+##########1.Create seurat object##########
+sc.raw.counts <- Read10X("data/raw/sc.data.SinglePortal/")
+sc.raw <- CreateSeuratObject(counts = sc.raw.counts, project = "glioma", min.cells = 3, min.features = 200)
+saveRDS(sc.raw, "./tmp/sc.raw.glioma.seuratobject.rds")
 
-##########Create seurat object##########
-sc.raw <- Read10X("your_data_path")
-sc.raw <- readRDS("your_data_path")
-sc.data <- CreateSeuratObject(sc.raw, min.cells = 3, min.features = 200)
+# subset T cells
+raw.meta <- read.csv(gzfile("data/raw/sc.data.SinglePortal/Meta_GBM.txt.gz"))[-1, ]
+tcells.id <- raw.meta[raw.meta$Assignment %in% "TCells", ][, 1]
+sc.raw@meta.data$barcode <- colnames(sc.raw)
+sc.tcells <- subset(sc.raw, barcode %in% tcells.id)
 
-##########Quality control##########
-sc.data[["percent.mt"]] <- PercentageFeatureSet(sc.data, pattern = "^MT-")
-sc.data <- subset(sc.data, subset = nFeature_RNA > 200 & nFeature_RNA < 2500 & percent.mt < 5)
+##########2.Quality control##########
+sc.tcells[["percent.mt"]] <- PercentageFeatureSet(sc.tcells, pattern = "^MT-")
+sc.tcells <- subset(sc.tcells, subset = nFeature_RNA > 200 & nFeature_RNA < 2500 & percent.mt < 5)
 
-##########Non-Intergration##########
+##########3-1Non-Intergrations##########
+
 # Standard preprocessing workflow
-sc.data <- NormalizeData(sc.data)
-sc.data <- FindVariableFeatures(sc.data)
-sc.data <- ScaleData(sc.data)
-sc.data <- RunPCA(sc.data)
-sc.data <- FindNeighbors(sc.data, reduction = "pca", dims = 1:30) # reduction: choose others if IntegrateLayerss
-sc.data <- FindClusters(sc.data, resolution = 0.8, cluster.name = "res = 0.1")
-sc.data <- FindClusters(sc.data, resolution = 0.8, cluster.name = "res = 0.8")
-sc.data <- RunUMAP(sc.data, reduction = "pca", dims = 1:30, reduction.name = "umap")
-pdf("./tmp/dimplot_unintegrated.pdf", width = 15, height = 6, useDingbats = F)
-DimPlot(sc.data, reduction = "umap.unintegrated", 
+sc.tcells <- NormalizeData(sc.tcells)
+sc.tcells <- FindVariableFeatures(sc.tcells)
+sc.tcells <- ScaleData(sc.tcells)
+sc.tcells <- RunPCA(sc.tcells)
+sc.tcells <- FindNeighbors(sc.tcells, reduction = "pca", dims = 1:30)
+sc.tcells <- FindClusters(sc.tcells, resolution = 0.1)
+sc.tcells <- FindClusters(sc.tcells, resolution = 0.8)
+sc.tcells <- RunUMAP(sc.tcells, reduction = "pca", dims = 1:30, reduction.name = "umap.unintegrated")
+pdf("./results/dimplot_unintegrated.pdf", width = 15, height = 6, useDingbats = F)
+DimPlot(sc.tcells, reduction = "umap.unintegrated", 
         group.by = c("orig.ident", "seurat_clusters"),
         raster = FALSE)
 dev.off()
 
-##########CCA-Intergration##########
-sc.data[["RNA"]] <- split(sc.data[["RNA"]], f = sc.data$orig.ident) # split layers if multi datasets
-sc.data <- IntegrateLayers(sc.data,
+pdf("./results/dimplot_unintegrated_res=0.1.pdf", width = 15, height = 6, useDingbats = F)
+DimPlot(sc.tcells, reduction = "umap.unintegrated", 
+        group.by = c("orig.ident", "RNA_snn_res.0.1"),
+        raster = FALSE)
+dev.off()
+
+pdf("./results/dimplot_unintegrated_res=0.8.pdf", width = 15, height = 6, useDingbats = F)
+DimPlot(sc.tcells, reduction = "umap.unintegrated", 
+        group.by = c("orig.ident", "RNA_snn_res.0.1"),
+        raster = FALSE)
+dev.off()
+
+##########3-2CCA-Intergration##########
+sc.tcells[["RNA"]] <- split(sc.tcells[["RNA"]], f = sc.tcells$orig.ident)
+sc.tcells <- NormalizeData(sc.tcells)
+sc.tcells <- FindVariableFeatures(sc.tcells)
+sc.tcells <- ScaleData(sc.tcells)
+sc.tcells <- RunPCA(sc.tcells)
+sc.tcells <- IntegrateLayers(sc.tcells,
                            method = CCAIntegration,
                            orig.reduction = "pca",
                            new.reduction = "integrated.rpca",
                            verbose = F,
                            k.weight = 32)
 
-sc.data[["RNA"]] <- JoinLayers(sc.data[["RNA"]])
-sc.data <- FindNeighbors(sc.data, reduction = "integrated.cca", dims = 1:30)
-sc.data <- FindClusters(sc.data, resolution = 0.1)
-sc.data <- RunUMAP(sc.data, dims = 1:30, reduction = "integrated.cca")
+sc.tcells[["RNA"]] <- JoinLayers(sc.tcells[["RNA"]])
+sc.tcells <- FindNeighbors(sc.tcells, reduction = "integrated.cca", dims = 1:30)
+sc.tcells <- FindClusters(sc.tcells, resolution = 0.1)
+sc.tcells <- RunUMAP(sc.tcells, dims = 1:30, reduction = "integrated.cca")
 
 pdf("./tmp/dimplot_integrated.pdf", width = 15, height = 6, useDingbats = F)
 DimPlot(sc.data, reduction = "umap", group.by = c("orig.ident", "seurat_clusters"),
@@ -48,3 +70,6 @@ DimPlot(sc.data, reduction = "umap", group.by = c("orig.ident", "seurat_clusters
 dev.off()
 
 saveRDS(sc.data, file = "./tmp/sc.data.rds")
+
+
+DimPlot(sc.tcells)
