@@ -1,4 +1,4 @@
-# scRNA_seq-code-repository
+# scRNA-seq-code-repository
 
 ## TASK：
 
