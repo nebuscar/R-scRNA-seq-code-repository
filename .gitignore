@@ -137,3 +137,4 @@ data/seurat/tcells_rm_batch-1.rds
 data/seurat/tcells_rm_batch.rds
 data/seurat/tcells_seurat_objects.rds
 data/seurat/tcells_sub_counts.rds
+.Rhistory
