@@ -50,12 +50,14 @@ R（v4.3.3）；RStudio；Seurat（v5.0.3，https://github.com/satijalab/seurat�
 
 3.Scale
 
-4.FindNeighbours
+4.PCA
 
-5.FindClusters (we can setup resolution e.g. res=0.1, 0.8)
+5.FindNeighbours
 
-6.UMAP
+6.FindClusters (we can setup resolution e.g. res=0.1, 0.8)
+
+7.UMAP
 
 7.Finally, we will get a clustering map
 
-Remember: if the data comes from muti datasets, do integration(e.g. CCA-Integration, RPCA-Integration)
+Remember: if the data comes from muti datasets, do integration after PCA(e.g. CCA-Integration, RPCA-Integration)
