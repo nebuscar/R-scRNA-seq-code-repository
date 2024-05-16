@@ -6,11 +6,15 @@
 
 #### 1.实验目的
 
-2.1熟悉基于R的seurat标准预处理分析流程
+1.1熟悉基于R的seurat标准预处理分析流程
 
-2.2理解seurat obeject数据结构
+1.2理解seurat obeject数据结构
 
-2.3为后续细胞注释分析工作作准备
+1.3为后续细胞注释分析工作作准备
+
+#### 2.实验内容
+
+    基于数据库下载的单细胞数据，使用R包Seurat进行标准预处理流程，跑通并整理成可读性强的脚本。
 
 #### 3.实验材料：
 
@@ -58,9 +62,9 @@ R（v4.3.3）；RStudio；Seurat（v5.0.3，https://github.com/satijalab/seurat�
 
 7.UMAP
 
-7.Finally, we will get a clustering map
+8.Finally, we will get a clustering map
 
-Remember: if the data comes from muti datasets, do integration after PCA(e.g. CCA-Integration, RPCA-Integration)
+**Remember:** if the data comes from muti datasets, do integration after PCA(e.g. CCA-Integration, RPCA-Integration)
 
 #### 5.注意事项
 
@@ -77,3 +81,5 @@ Remember: if the data comes from muti datasets, do integration after PCA(e.g. CC
 6.对于过程中产生的临时文件，对于需要的数据，例如大文件（分析时间过长），中部关键数据，要随时保存，并写下读取代码。
 
 7.变量的命名，在保证可读的基本要求下，尽量简洁。（例如：读取的原始单细胞counts矩阵可命名为：sc.raw.counts）
+
+## 2024/05/17
