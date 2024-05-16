@@ -3,12 +3,12 @@ setwd(workdir)
 library(Seurat)
 
 ##########1.Create seurat object##########
-sc.raw.counts <- Read10X("data/raw/sc.data.SinglePortal/")
+sc.raw.counts <- Read10X("data/raw/sc.data.SingleCellPortal/")
 sc.raw <- CreateSeuratObject(counts = sc.raw.counts, project = "glioma", min.cells = 3, min.features = 200)
 saveRDS(sc.raw, "./tmp/sc.raw.glioma.seuratobject.rds")
 
 # subset T cells
-raw.meta <- read.csv(gzfile("data/raw/sc.data.SinglePortal/Meta_GBM.txt.gz"))[-1, ]
+raw.meta <- read.csv(gzfile("data/raw/sc.data.SingleCellPortal/Meta_GBM.txt.gz"))[-1, ]
 tcells.id <- raw.meta[raw.meta$Assignment %in% "TCells", ][, 1]
 sc.raw@meta.data$barcode <- colnames(sc.raw)
 # sc.tcells <- subset(sc.raw, barcode %in% tcells.id) # 尽量避免使用subset进行连续子集操作
