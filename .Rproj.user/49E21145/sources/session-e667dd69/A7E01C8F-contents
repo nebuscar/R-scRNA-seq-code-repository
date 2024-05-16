@@ -103,30 +103,30 @@ sc.tcells <- FindVariableFeatures(sc.tcells)
 sc.tcells <- ScaleData(sc.tcells)
 sc.tcells <- RunPCA(sc.tcells)
 sc.tcells <- IntegrateLayers(sc.tcells,
-                             method = CCAIntegration,
+                             method = RPCAIntegration,
                              orig.reduction = "pca",
-                             new.reduction = "integrated.cca",
+                             new.reduction = "integrated.rpca",
                              verbose = F,
                              k.weight = 32,
-)
+                             )
 sc.tcells[["RNA"]] <- JoinLayers(sc.tcells[["RNA"]])
-sc.tcells <- FindNeighbors(sc.tcells, reduction = "integrated.cca", dims = 1:30)
-sc.tcells <- FindClusters(sc.tcells, resolution = 0.1, cluster.name = "integrated_cca_clusters_res.0.1")
-sc.tcells <- FindClusters(sc.tcells, resolution = 0.8,cluster.name = "integrated_cca_clusters_res.0.8")
-sc.tcells <- RunUMAP(sc.tcells, dims = 1:30, reduction = "integrated.cca", reduction.name = "umap.cca")
+sc.tcells <- FindNeighbors(sc.tcells, reduction = "integrated.rpca", dims = 1:30)
+sc.tcells <- FindClusters(sc.tcells, resolution = 0.1, cluster.name = "integrated_rpca_clusters_res.0.1")
+sc.tcells <- FindClusters(sc.tcells, resolution = 0.8,cluster.name = "integrated_rpca_clusters_res.0.8")
+sc.tcells <- RunUMAP(sc.tcells, dims = 1:30, reduction = "integrated.rpca", reduction.name = "umap.rpca")
 
-pdf("./results/dimplot_integrated_cca.pdf", width = 15, height = 6, useDingbats = F)
-DimPlot(sc.tcells, reduction = "umap.cca", group.by = c("orig.ident", "seurat_clusters"),
+pdf("./results/dimplot_integrated_rpca.pdf", width = 15, height = 6, useDingbats = F)
+DimPlot(sc.tcells, reduction = "umap.rpca", group.by = c("orig.ident", "seurat_clusters"),
         raster = FALSE, label = TRUE, label.size = 8)+ NoLegend()
 dev.off()
 
-pdf("./results/dimplot_integrated_cca_res=0.1.pdf", width = 15, height = 6, useDingbats = F)
-DimPlot(sc.tcells, reduction = "umap.cca", group.by = c("orig.ident", "integrated_cca_clusters_res.0.1"),
+pdf("./results/dimplot_integrated_rpca_res=0.1.pdf", width = 15, height = 6, useDingbats = F)
+DimPlot(sc.tcells, reduction = "umap.rpca", group.by = c("orig.ident", "integrated_rpca_clusters_res.0.1"),
         raster = FALSE, label = TRUE, label.size = 8)+ NoLegend()
 dev.off()
 
-pdf("./results/dimplot_integrated_caa_res=0.8.pdf", width = 15, height = 6, useDingbats = F)
-DimPlot(sc.tcells, reduction = "umap.cca", group.by = c("orig.ident", "integrated_cca_clusters_res.0.8"),
+pdf("./results/dimplot_integrated_rpca_res=0.8.pdf", width = 15, height = 6, useDingbats = F)
+DimPlot(sc.tcells, reduction = "umap.rpca", group.by = c("orig.ident", "integrated_rpca_clusters_res.0.8"),
         raster = FALSE, label = TRUE, label.size = 8)+ NoLegend()
 dev.off()
 
