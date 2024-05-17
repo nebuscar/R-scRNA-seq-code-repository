@@ -1,0 +1,160 @@
+dataSC <- readRDS("E:/GitHub/scRNA-seq-code-repository/data/dataSC.rds")
+View(dataSC)
+dataSC@assays[["RNA"]]@layers[["scale.data"]]
+library(Seurat)
+tmp <- GetAssayData(dataSC)
+View(tmp)
+sc.tcells.seuratobject <- CreateSeuratObject(tmp, min.cells = 3, min.features = 200)
+View(sc.tcells.seuratobject)
+View(dataSC)
+View(sc.tcells.seuratobject)
+View(dataSC)
+dataSC
+colnames(dataSC)
+ncol(dataSC)
+nrow(dataSC)
+table(dataSC)
+Cells(dataSC)
+nCells(dataSC)
+sc.tcells.seuratobject@meta.data
+(sc.tcells.seuratobject@meta.data,10)
+sc.tcells.seuratobject@meta.data[10, ]
+sc.tcells.seuratobject@meta.data[,10 ]
+sc.raw <- readRDS("E:/GitHub/scRNA-seq-code-repository/tmp/sc.raw.glioma.seuratobject.rds")
+# subset T cells
+raw.meta <- read.csv(gzfile("data/raw/sc.data.SinglePortal/Meta_GBM.txt.gz"))[-1, ]
+tcells.id <- raw.meta[raw.meta$Assignment %in% "TCells", ][, 1]
+sc.raw@meta.data$barcode <- colnames(sc.raw)
+sc.tcells <- subset(sc.raw, barcode %in% tcells.id)
+##########2.Quality control##########
+sc.tcells[["percent.mt"]] <- PercentageFeatureSet(sc.tcells, pattern = "^MT-")
+##########3-2CCA-Intergration##########
+sc.tcells[["RNA"]] <- split(sc.tcells[["RNA"]], f = sc.tcells$orig.ident)
+sc.tcells <- NormalizeData(sc.tcells)
+sc.tcells <- FindVariableFeatures(sc.tcells)
+sc.tcells <- subset(sc.raw, barcode %in% tcells.id)
+##########2.Quality control##########
+sc.tcells[["percent.mt"]] <- PercentageFeatureSet(sc.tcells, pattern = "^MT-")
+sc.tcells <- subset(sc.tcells, subset = nFeature_RNA > 200 & nFeature_RNA < 2500 & percent.mt < 5)
+table(sc.tcells$orig.ident)
+sc.tcells <- subset(sc.tcells, subset = nFeature_RNA > 200 & nFeature_RNA < 2500 & percent.mt < 10)
+sc.tcells <- subset(sc.raw, barcode %in% tcells.id)
+##########2.Quality control##########
+sc.tcells[["percent.mt"]] <- PercentageFeatureSet(sc.tcells, pattern = "^MT-")
+sc.tcells <- subset(sc.tcells, subset = nFeature_RNA > 200 & nFeature_RNA < 2500 & percent.mt < 10)
+table(sc.tcells$orig.ident)
+?table
+table(sc.tcells@meta.data$orig.ident)
+table(sc.tcells$orig.ident)
+table(sc.tcells$orig.ident)>50
+table(sc.tcells@meta.data$orig.ident)>50
+names(table(sc.tcells$orig.ident)>50)
+orig.ident.meta <- table(sc.tcells$orig.ident)>50
+orig.ident.meta == T
+orig.ident.meta(orig.ident.meta == T)
+orig.ident.meta[orig.ident.meta == T]
+sc.tcells_sub <- subset(sc.tcells, subset = orig.ident %in% names(orig.ident.meta[orig.ident.meta == T]))
+View(sc.tcells_sub)
+##########3-2CCA-Intergration##########
+sc.tcells[["RNA"]] <- split(sc.tcells[["RNA"]], f = sc.tcells$orig.ident)
+sc.tcells <- NormalizeData(sc.tcells)
+sc.tcells <- FindVariableFeatures(sc.tcells)
+sc.tcells <- ScaleData(sc.tcells)
+sc.tcells <- RunPCA(sc.tcells)
+sc.tcells <- IntegrateLayers(sc.tcells,
+method = CCAIntegration,
+orig.reduction = "pca",
+new.reduction = "integrated.rpca",
+verbose = F,
+#k.weight = 32,
+)
+sc.tcells <- IntegrateLayers(sc.tcells,
+method = CCAIntegration,
+orig.reduction = "pca",
+new.reduction = "integrated.rpca",
+verbose = F,
+k.weight = 32,
+)
+sc.raw <- readRDS("E:/GitHub/scRNA-seq-code-repository/tmp/sc.raw.glioma.seuratobject.rds")
+# subset T cells
+raw.meta <- read.csv(gzfile("data/raw/sc.data.SinglePortal/Meta_GBM.txt.gz"))[-1, ]
+tcells.id <- raw.meta[raw.meta$Assignment %in% "TCells", ][, 1]
+sc.raw@meta.data$barcode <- colnames(sc.raw)
+sc.tcells <- subset(sc.raw, barcode %in% tcells.id)
+orig.ident.meta <- table(sc.tcells$orig.ident)>50
+table(sc.tcells$orig.ident)>50
+table(sc.tcells$orig.ident)
+sc.tcells_sub <- subset(sc.tcells, subset = orig.ident %in% names(orig.ident.meta[orig.ident.meta == T]))
+sc.tcells <- subset(sc.tcells, subset = orig.ident %in% names(orig.ident.meta[orig.ident.meta == T]))
+rm(sc.tcells_sub)
+##########2.Quality control##########
+sc.tcells[["percent.mt"]] <- PercentageFeatureSet(sc.tcells, pattern = "^MT-")
+sc.tcells <- subset(sc.tcells, subset = nFeature_RNA > 200 & nFeature_RNA < 2500 & percent.mt < 10)
+table(sc.tcells$orig.ident)
+sc.tcells <- subset(sc.raw, barcode %in% tcells.id)
+orig.ident.meta <- table(sc.tcells@meta.data$orig.ident)>50
+table(sc.tcells@meta.data$orig.ident)
+sc.tcells <- subset(sc.tcells, subset = orig.ident %in% names(orig.ident.meta[orig.ident.meta == T]))
+table(sc.tcells@meta.data$orig.ident)
+sc.tcells <- subset(sc.raw, barcode %in% tcells.id)
+orig.ident.meta <- table(sc.tcells@meta.data$orig.ident)>50
+sc.tcells <- subset(sc.tcells, subset = orig.ident == names(orig.ident.meta[orig.ident.meta == T]))
+sc.tcells <- subset(sc.tcells, subset = orig.ident %in% names(orig.ident.meta[orig.ident.meta == T]))
+table(sc.tcells@meta.data$orig.ident)
+sc.tcells <- subset(sc.raw, barcode %in% tcells.id)
+orig.ident.meta <- table(sc.tcells@meta.data$orig.ident)>50
+sc.tcells <- subset(sc.tcells, subset = orig.ident %in% names(orig.ident.meta[orig.ident.meta == T]))
+table(sc.tcells@meta.data$orig.ident)
+sc.tcells <- subset(sc.raw, barcode %in% tcells.id)
+orig.ident.meta <- table(sc.tcells@meta.data$orig.ident)>50
+sc.tcells <- subset(sc.tcells, subset = orig.ident %in% names(orig.ident.meta[orig.ident.meta == T]), invert = T)
+table(sc.tcells@meta.data$orig.ident)
+names(orig.ident.meta[orig.ident.meta == T])
+sc.tcells <- subset(sc.raw, barcode %in% tcells.id)
+count_dataset <- table(tcells@meta.data$orig.ident)
+count_dataset <- table(sc.tcells@meta.data$orig.ident)
+count_few <- count_dataset[count_dataset < 30]
+sc.tcells <- subset(sc.tcells, subset = orig.ident %in% names(count_few), invert = T)
+table(sc.tcells@meta.data$orig.ident)
+sc.tcells <- subset(sc.tcells, subset = orig.ident %in% names(count_few), invert = F)
+sc.tcells <- subset(sc.tcells, subset = orig.ident %in% names(count_few), invert = T)
+View(sc.tcells)
+sc.tcells@assays[["RNA"]]@assay.orig
+sc.raw <- readRDS("E:/GitHub/scRNA-seq-code-repository/tmp/sc.raw.glioma.seuratobject.rds")
+sc.tcells <- subset(sc.tcells, subset = !(orig.ident %in% names(orig.ident.meta[orig.ident.meta == T]))
+sc.tcells <- subset(sc.raw, barcode %in% tcells.id)
+sc.tcells <- subset(sc.raw, barcode %in% tcells.id)
+# subset T cells
+raw.meta <- read.csv(gzfile("data/raw/sc.data.SinglePortal/Meta_GBM.txt.gz"))[-1, ]
+tcells.id <- raw.meta[raw.meta$Assignment %in% "TCells", ][, 1]
+sc.raw@meta.data$barcode <- colnames(sc.raw)
+sc.tcells <- subset(sc.raw, barcode %in% tcells.id)
+sc.tcells <- subset(sc.raw, barcode %in% tcells.id)
+orig.ident.meta <- table(sc.tcells@meta.data$orig.ident)>50
+sc.tcells <- subset(sc.tcells, subset = !(orig.ident %in% names(orig.ident.meta[orig.ident.meta == T])))
+sc.tcells <- subset(sc.raw, barcode %in% tcells.id)
+sc.tcells1 <- subset(sc.raw, barcode %in% tcells.id)
+sc.tcells2 <- sc.raw[, colnames(sc.raw) %in% tcells.id]
+View(sc.tcells1)
+View(sc.tcells2)
+sc.raw <- readRDS("E:/GitHub/scRNA-seq-code-repository/tmp/sc.raw.glioma.seuratobject.rds")
+# subset T cells
+raw.meta <- read.csv(gzfile("data/raw/sc.data.SinglePortal/Meta_GBM.txt.gz"))[-1, ]
+tcells.id <- raw.meta[raw.meta$Assignment %in% "TCells", ][, 1]
+sc.raw@meta.data$barcode <- colnames(sc.raw)
+# sc.tcells <- subset(sc.raw, barcode %in% tcells.id) # 尽量避免使用subset进行连续子集操作
+sc.tcells <- sc.raw[, colnames(sc.raw) %in% tcells.id]
+t(sc.tcells)
+colSums(t(sc.tcells > 0))
+gene_counts <- colSums(t(sc.tcells > 0))
+orig.ident.meta <- table(sc.tcells@meta.data$orig.ident)>50
+sc.tcells <- subset(sc.tcells, subset = orig.ident %in% names(orig.ident.meta[orig.ident.meta == T]))
+table(sc.tcells@meta.data$orig.ident)
+sc.tcells <- readRDS("tmp/sc.tcells.after_umap.rpca~without QC.rds")
+library(Seurat)
+library(loomR)
+install.packages("loomR")
+BiocManager::install("loomR")
+install.packages("SeuratDisk")
+install.packages("SeuratDisk")
+install.packages("SeuratDisk")
