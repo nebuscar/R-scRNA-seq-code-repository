@@ -83,3 +83,85 @@
     7.变量的命名，在保证可读的基本要求下，尽量简洁。（例如：读取的原始单细胞counts矩阵可命名为：sc.raw.counts）
 
 ## 2024/05/17
+
+### 整理基于Python的单细胞数据分析--Seurat.object与Scanpy.anndata格式转换
+
+#### 1.实验目的
+
+    1.1了解Seurat.object与Scanpy.anndata格式转换的方法
+
+    1.2尝试读取2024/05/16预处理的SingleCellPortal单细胞数据（即sc.tcells）
+
+#### 2.实验内容
+
+    使用R语言，读取seurat标准流程预处理的单细胞数据（即sc.tcells.after_umap.rpca~without QC.rds），并将其转换为Scanpy.anndata格式，以便后续用python处理单细胞数据
+
+#### 3.实验材料
+
+##### 3.1数据来源：
+
+    2024/05/16基于R包Seurat预处理的Tcells 单细胞数据，该数据已经过RPCA整合，并进行了UMAP降维聚类
+
+##### 3.2软件与平台
+
+    R（v4.3.3）；RStudio；R包Seurat（v5.0.3，https://github.com/satijalab/seurat）；Python库Scanpy（v1.10.1，https://github.com/scverse/scanpy）；Scanpy tutorial（https://scanpy.readthedocs.io/en/stable/#）；AnnData tutorial（https://anndata.readthedocs.io/en/latest/index.html）；Other Packages（Convert from Seurat.object to Scanpy.anndata）
+
+#### 4.实验步骤
+
+##### 4.1SCP
+
+`library(SCP) `
+
+`data("pancreas1k") `
+
+`adata <- srt_to_adata(pancreas1k) `
+
+`adata$write_h5ad("pancreas1k.h5ad")`
+
+##### 4.2zellkonverter
+
+`sce_obj <- as.SingleCellExperiment(sce_obj, assay = c("RNA")) `
+
+`library(zellkonverter) `
+
+`writeH5AD(sce_obj, "sce_obj.h5ad", X_name = 'counts')`
+
+##### 4.3reticulate
+
+`require(Seurat)`
+`require(reticulate)`
+
+`seu <- readRDS('your_path_seurat_object_rds')`
+
+`#load python anndata package`
+
+`anndata <- reticulate::import('anndata')`
+
+`#create anndata object`
+
+`adata <- anndata$AnnData(X = seu@assays$RNA@layers$counts, obs = data.frame(row.names = rownames(seu)), var = seu@meta.data )`
+`adata$write("your_path_scanpy_obj_h5ad")`
+
+`#Of note that adata require an inversion in python scanpy`
+
+`import scanpy as sc `
+
+`adata = sc.read_h5ad("your_path_scanpy_obj_h5ad") `
+
+`adata = adata.T`
+
+##### 4.4SeuratDisk
+
+`library(SeuratDisk) `
+
+`SaveH5Seurat(sc.tcells, filename = "./tmp/pbmc3k.h5Seurat") Convert("./tmp/pbmc3k.h5Seurat", dest = "h5ad")`
+
+##### 4.5使用Scanpy.read_10x_mtx()直接读取原始glioma数据
+
+`adata=sc.read_10x_mtx("./data/raw/")`
+
+#### 5.实验结果
+
+1.上述四种转换方法尝试均失败
+
+2.使用Scanpy直接读取raw.data.glioma也会出现报错
