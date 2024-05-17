@@ -1,6 +1,7 @@
 library(Seurat)
 
 sc.tcells <- readRDS("./tmp/sc.tcells.after_umap.rpca~without QC.rds")
+data <- readRDS("./tmp/sc.tcells.after_umap.rpca~without QC.rds")
 
 
 ##########!SCP##########
@@ -35,3 +36,17 @@ adata = adata.T
 library(SeuratDisk)
 SaveH5Seurat(sc.tcells, filename = "./tmp/pbmc3k.h5Seurat")
 Convert("./tmp/pbmc3k.h5Seurat", dest = "h5ad")
+
+##########h5ad##########
+# Transfer Seurat Obj to h5ad
+library(Seurat)
+library(dior)
+
+data <- readRDS("path/to/your/data.rds")
+
+data <- write_h5(data, 
+                 file = "data.h5", 
+                 object.type = 'seurat', 
+                 assay.name = 'RNA', 
+                 save.graphs = TRUE, 
+                 save.scale=FALSE)
