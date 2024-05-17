@@ -1,0 +1,27 @@
+{
+    "id": "B1E4FA28",
+    "path": "E:/GitHub/scRNA-seq-code-repository/coding/r/convert from seurat.object to scanpy.anndata.R",
+    "project_path": "coding/r/convert from seurat.object to scanpy.anndata.R",
+    "type": "r_source",
+    "hash": "0",
+    "contents": "",
+    "dirty": false,
+    "created": 1715937573842.0,
+    "source_on_save": false,
+    "relative_order": 1,
+    "properties": {
+        "tempName": "Untitled1",
+        "source_window_id": "",
+        "Source": "Source",
+        "cursorPosition": "37,0",
+        "scrollLine": "0"
+    },
+    "folds": "5|14|10|0|\n11|24|16|0|\n17|21|32|15|\n",
+    "lastKnownWriteTime": 1715940075,
+    "encoding": "UTF-8",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1715940075,
+    "read_only": false,
+    "read_only_alternatives": []
+}
