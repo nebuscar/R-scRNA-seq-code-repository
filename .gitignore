@@ -77,7 +77,7 @@ data/raw/sc.data.CGGA/mRNAseq_693/clinical/__MACOSX/._CGGA.mRNAseq_693_clinical.
 .Rhistory
 .Rproj.user/49E21145/ctx/ctx-26547/environment
 *.Rhistory
-Rproj.user/**
+.Rproj.user/**
 *.RData
 *.rds
 *.gz
