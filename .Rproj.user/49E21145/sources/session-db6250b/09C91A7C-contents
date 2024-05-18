@@ -1,1 +1,0 @@
-tmp <- Seurat::ReadMtx(mtx = "data/raw/sc.data.SingleCellPortal/10x/matrix.mtx")
