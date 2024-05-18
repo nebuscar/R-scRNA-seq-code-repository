@@ -1,15 +1,3 @@
-data/download/MANIFEST.txt
-data/raw/TCGA/TCGA_GBM_TPM_geneName.tsv
-data/raw/TCGA/TCGA_GBM.tsv
-data/raw/sc.data.CGGA/mRNAseq_325/bulkdata/CGGA.mRNAseq_325.RSEM-genes.20200506.txt
-data/raw/sc.data.CGGA/mRNAseq_325/bulkdata/__MACOSX/._CGGA.mRNAseq_325.RSEM-genes.20200506.txt
-data/raw/sc.data.CGGA/mRNAseq_325/clinical/CGGA.mRNAseq_325_clinical.20200506.txt
-data/raw/sc.data.CGGA/mRNAseq_325/clinical/__MACOSX/._CGGA.mRNAseq_325_clinical.20200506.txt
-data/raw/sc.data.CGGA/mRNAseq_693/bulkdata/CGGA.mRNAseq_693.RSEM-genes.20200506.txt
-data/raw/sc.data.CGGA/mRNAseq_693/bulkdata/__MACOSX/._CGGA.mRNAseq_693.RSEM-genes.20200506.txt
-data/raw/sc.data.CGGA/mRNAseq_693/clinical/CGGA.mRNAseq_693_clinical.20200506.txt
-data/raw/sc.data.CGGA/mRNAseq_693/clinical/__MACOSX/._CGGA.mRNAseq_693_clinical.20200506.txt
-.Rproj.user/49E21145/ctx/ctx-26547/environment
 *.Rhistory
 .Rproj.user/**
 *.RData
@@ -17,3 +5,5 @@ data/raw/sc.data.CGGA/mRNAseq_693/clinical/__MACOSX/._CGGA.mRNAseq_693_clinical.
 *.gz
 *.zip
 tmp/**
+data/raw/sc.data.CGGA/**
+data/raw/TCGA/**
