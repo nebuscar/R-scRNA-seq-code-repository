@@ -139,3 +139,9 @@ data/seurat/tcells_seurat_objects.rds
 data/seurat/tcells_sub_counts.rds
 .Rhistory
 .Rproj.user/49E21145/ctx/ctx-26547/environment
+*.Rhistory
+*.Rproj.user
+*.RData
+*.rds
+*.gz
+*.zip
