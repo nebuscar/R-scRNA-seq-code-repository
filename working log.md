@@ -24,7 +24,7 @@
 
     Single Cell Portal数据，人，脑胶质瘤GBM，T cells（subset）
 
-    链接：https://singlecell.broadinstitute.org/single_cell/study/SCP1985/single-cell-analysis-of-human-glioma-and-immune-cells-identifies-s100a4-as-an-			immunotherapy-target-gse182109
+    链接：https://singlecell.broadinstitute.org/single_cell/study/SCP1985/single-cell-analysis-of-human-glioma-and-immune-cells-identifies-s100a4-as-an-immunotherapy-target-gse182109
 
 ##### 3.2软件与平台：
 
@@ -165,3 +165,29 @@
 1.上述四种转换方法尝试均失败
 
 2.使用Scanpy直接读取raw.data.glioma也会出现报错
+
+## 2024/05/18
+
+### 整理基于Python的单细胞数据分析--preprocessing部分
+
+#### 1.实验目的
+
+    1.1解决2024/05/17遗留的问题：即Scanpy无法读取10x单细胞基因表达矩阵
+
+    1.2熟悉Scanpy的单细胞数据预处理流程，从读取到降维聚类
+
+#### 2.实验内容
+
+#### 3.实验材料
+
+##### 3.1数据来源
+
+    SingleCellPortal单细胞转录组测序数据库，人，脑胶质瘤GBM，Tcells
+
+    链接：https://singlecell.broadinstitute.org/single_cell/study/SCP1985/single-cell-analysis-of-human-glioma-and-immune-cells-identifies-s100a4-as-an-immunotherapy-target-gse182109
+
+##### 3.2软件与平台
+
+    R（v4.3.3）；RStudio；Python库Scanpy（v1.10.1，https://github.com/scverse/scanpy）
+
+##### 4.实验步骤
