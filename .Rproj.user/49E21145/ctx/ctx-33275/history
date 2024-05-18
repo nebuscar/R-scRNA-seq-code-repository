@@ -1,0 +1,512 @@
+F
+##########2.Quality control##########
+tmp <- subset(sc.combined, subset = nFeature_RNA > 200 & nFeature_RNA < 2500 & percent.mt < 10)
+vln_plot <- VlnPlot(tmp, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3,
+raster = F, pt.size = 0)
+ggsave(filename = "./results/competition/violin_plot~after QC.png", plot = vln_plot, width = 10, height = 6)
+table(tmp@meta.data$orig.ident)
+##########2.Quality control##########
+tmp <- subset(sc.combined, subset = min.cells > 3 & min.features < 200)
+saveRDS(sc.combined, "tmp/competition/sc.combined.rds")
+saveRDS(sc.combined, "tmp/competition/sc.combined.rds")
+sc.combined <- readRDS("E:/GitHub/scRNA-seq-code-repository/tmp/competition/sc.combined.rds")
+##########3-1Non-Integration##########
+sc.combined.Non-Integration <- NormalizeData(sc.combined)
+##########3-1Non-Integration##########
+sc.combined.Non-Integration <- NormalizeData(sc.combined)
+View(sc.combined)
+sc.combined <- NormalizeData(sc.combined)
+sc.combined <- FindVariableFeatures(sc.combined)
+sc.combined <- readRDS("E:/GitHub/scRNA-seq-code-repository/tmp/competition/sc.combined.rds")
+##########3-1Non-Integration##########
+sc.combined_unintegrated <- NormalizeData(sc.combined)
+sc.combined_unintegrated <- FindVariableFeatures(sc.combined_unintegrated)
+sc.combined_unintegrated <- ScaleData(sc.combined_unintegrated)
+sc.combined_unintegrated <- RunPCA(sc.combined_unintegrated)
+sc.combined_unintegrated <- FindNeighbors(sc.combined_unintegrated, reduction = "pca", dims = 1:30)
+sc.combined_unintegrated <- FindClusters(sc.combined_unintegrated, resolution = 0.1, cluster.name = "unintegrated_clusters_res=0.1")
+sc.combined_unintegrated <- FindClusters(sc.combined_unintegrated, resolution = 0.8, cluster.name = "unintegrated_clusters_res=0.8")
+sc.combined_unintegrated <- RunUMAP(sc.combined_unintegrated, reduction = "pca", dims = 1:30, reduction.name = "umap.unintegrated")
+pdf("./results/competition/dimplot_unintegrated.pdf", width = 15, height = 6, useDingbats = F)
+DimPlot(sc.combined, reduction = "umap.unintegrated",
+group.by = c("orig.ident", "seurat_clusters"),
+raster = FALSE)
+dev.off()
+pdf("./results/dimplot_unintegrated_res=0.1.pdf", width = 15, height = 6, useDingbats = F)
+DimPlot(sc.tcells, reduction = "umap.unintegrated",
+group.by = c("orig.ident", "unintegrated_clusters_res=0.1"),
+raster = FALSE)
+dev.off()
+pdf("./results/dimplot_unintegrated_res=0.8.pdf", width = 15, height = 6, useDingbats = F)
+DimPlot(sc.tcells, reduction = "umap.unintegrated",
+group.by = c("orig.ident", "unintegrated_clusters_res=0.8"),
+raster = FALSE)
+dev.off()
+DimPlot(sc.combined_unintegrated, reduction = "umap.unintegrated",
+group.by = c("orig.ident", "seurat_clusters"),
+raster = FALSE)
+dev.off()
+pdf("./results/dimplot_unintegrated_res=0.1.pdf", width = 15, height = 6, useDingbats = F)
+DimPlot(sc.combined_unintegrated, reduction = "umap.unintegrated",
+group.by = c("orig.ident", "unintegrated_clusters_res=0.1"),
+raster = FALSE)
+dev.off()
+pdf("./results/dimplot_unintegrated_res=0.8.pdf", width = 15, height = 6, useDingbats = F)
+DimPlot(sc.combined_unintegrated, reduction = "umap.unintegrated",
+group.by = c("orig.ident", "unintegrated_clusters_res=0.8"),
+raster = FALSE)
+dev.off()
+pdf("./results/competition/dimplot_unintegrated.pdf", width = 15, height = 6, useDingbats = F)
+DimPlot(sc.combined_unintegrated, reduction = "umap.unintegrated",
+group.by = c("orig.ident", "seurat_clusters"),
+raster = FALSE)
+dev.off()
+pdf("./results/competition/dimplot_unintegrated_res=0.1.pdf", width = 15, height = 6, useDingbats = F)
+DimPlot(sc.combined_unintegrated, reduction = "umap.unintegrated",
+group.by = c("orig.ident", "unintegrated_clusters_res=0.1"),
+raster = FALSE)
+dev.off()
+pdf("./results/competition/dimplot_unintegrated_res=0.8.pdf", width = 15, height = 6, useDingbats = F)
+DimPlot(sc.combined_unintegrated, reduction = "umap.unintegrated",
+group.by = c("orig.ident", "unintegrated_clusters_res=0.8"),
+raster = FALSE)
+dev.off()
+rm(sc.combined_unintegrated)
+##########3-2CCA-Intergration##########
+sc.combined[["RNA"]] <- split(sc.combined[["RNA"]], f = sc.combined$orig.ident)
+##########3-2CCA-Integration##########
+# sc.combined[["RNA"]] <- split(sc.combined[["RNA"]], f = sc.combined$orig.ident)
+sc.combined.cca_integration <- NormalizeData(sc.combined)
+sc.combined.cca_integration <- FindVariableFeatures(sc.combined.cca_integration)
+sc.combined.cca_integration <- ScaleData(sc.combined.cca_integration)
+sc.combined.cca_integration <- RunPCA(sc.combined.cca_integration)
+sc.combined.cca_integration <- IntegrateLayers(sc.combined.cca_integration,
+method = CCAIntegration,
+orig.reduction = "pca",
+new.reduction = "integrated.cca",
+verbose = F)
+sc.combined.cca_integration[["RNA"]] <- JoinLayers(sc.combined.cca_integration[["RNA"]])
+sc.combined.cca_integration <- FindNeighbors(sc.combined.cca_integration, reduction = "integrated.cca", dims = 1:30)
+sc.combined.cca_integration <- FindClusters(sc.combined.cca_integration, resolution = 0.1, cluster.name = "integrated_cca_clusters_res.0.1")
+sc.combined.cca_integration <- FindClusters(sc.combined.cca_integration, resolution = 0.8,cluster.name = "integrated_cca_clusters_res.0.8")
+sc.combined.cca_integration <- RunUMAP(sc.combined.cca_integration, dims = 1:30, reduction = "integrated.cca", reduction.name = "umap.cca")
+pdf("./results/competition/dimplot_integrated_cca.pdf", width = 15, height = 6, useDingbats = F)
+DimPlot(sc.tcells, reduction = "umap.cca", group.by = c("orig.ident", "seurat_clusters"),
+raster = FALSE, label = TRUE, label.size = 8)+ NoLegend()
+dev.off()
+pdf("./results/competition/dimplot_integrated_cca_res=0.1.pdf", width = 15, height = 6, useDingbats = F)
+DimPlot(sc.tcells, reduction = "umap.cca", group.by = c("orig.ident", "integrated_cca_clusters_res.0.1"),
+raster = FALSE, label = TRUE, label.size = 8)+ NoLegend()
+DimPlot(sc.combined.cca_integration, reduction = "umap.cca", group.by = c("orig.ident", "seurat_clusters"),
+raster = FALSE, label = TRUE, label.size = 8)+ NoLegend()
+dev.off()
+pdf("./results/competition/dimplot_integrated_cca_res=0.1.pdf", width = 15, height = 6, useDingbats = F)
+DimPlot(sc.combined.cca_integration, reduction = "umap.cca", group.by = c("orig.ident", "integrated_cca_clusters_res.0.1"),
+raster = FALSE, label = TRUE, label.size = 8)+ NoLegend()
+dev.off()
+pdf("./results/competition/dimplot_integrated_caa_res=0.8.pdf", width = 15, height = 6, useDingbats = F)
+DimPlot(sc.combined.cca_integration, reduction = "umap.cca", group.by = c("orig.ident", "integrated_cca_clusters_res.0.8"),
+raster = FALSE, label = TRUE, label.size = 8)+ NoLegend()
+dev.off()
+saveRDS(sc.combined.cca_integration, file = "./tmp/competition/sc.tcells.after_umap.cca~without QC.rds")
+pdf("./results/competition/dimplot_integrated_cca.pdf", width = 15, height = 6, useDingbats = F)
+DimPlot(sc.combined.cca_integration, reduction = "umap.cca", group.by = c("orig.ident", "seurat_clusters"),
+raster = FALSE, label = TRUE, label.size = 8)+ NoLegend()
+dev.off()
+##########3-3RPCA-Integration##########
+# sc.tcells[["RNA"]] <- split(sc.tcells[["RNA"]], f = sc.tcells$orig.ident)
+sc.combined.rpca_integration <- NormalizeData(sc.combined)
+sc.combined.rpca_integration <- FindVariableFeatures(sc.combined.rpca_integration)
+sc.combined.rpca_integration <- ScaleData(sc.combined.rpca_integration)
+sc.combined.rpca_integration <- RunPCA(sc.combined.rpca_integration)
+sc.combined.rpca_integration <- IntegrateLayers(sc.combined.rpca_integration,
+method = RPCAIntegration,
+orig.reduction = "pca",
+new.reduction = "integrated.rpca",
+verbose = F,
+k.weight = 32,
+)
+sc.combined.rpca_integration <- IntegrateLayers(sc.combined.rpca_integration,
+method = RPCAIntegration,
+orig.reduction = "pca",
+new.reduction = "integrated.rpca",
+verbose = F,
+)
+sc.combined.rpca_integration[["RNA"]] <- JoinLayers(sc.combined.rpca_integration[["RNA"]])
+sc.combined.rpca_integration <- FindNeighbors(sc.combined.rpca_integration, reduction = "integrated.rpca", dims = 1:30)
+sc.combined.rpca_integration <- FindClusters(sc.combined.rpca_integration, resolution = 0.1, cluster.name = "integrated_rpca_clusters_res.0.1")
+sc.combined.rpca_integration <- FindClusters(sc.combined.rpca_integration, resolution = 0.8,cluster.name = "integrated_rpca_clusters_res.0.8")
+sc.combined.rpca_integration <- RunUMAP(sc.combined.rpca_integration, dims = 1:30, reduction = "integrated.rpca", reduction.name = "umap.rpca")
+pdf("./results/competition/dimplot_integrated_rpca.pdf", width = 15, height = 6, useDingbats = F)
+DimPlot(sc.tcells, reduction = "umap.rpca", group.by = c("orig.ident", "seurat_clusters"),
+raster = FALSE, label = TRUE, label.size = 8)+ NoLegend()
+dev.off()
+pdf("./results/competition/dimplot_integrated_rpca_res=0.1.pdf", width = 15, height = 6, useDingbats = F)
+DimPlot(sc.tcells, reduction = "umap.rpca", group.by = c("orig.ident", "integrated_rpca_clusters_res.0.1"),
+raster = FALSE, label = TRUE, label.size = 8)+ NoLegend()
+dev.off()
+pdf("./results/competition/dimplot_integrated_rpca.pdf", width = 15, height = 6, useDingbats = F)
+DimPlot(sc.combined.rpca_integration, reduction = "umap.rpca", group.by = c("orig.ident", "seurat_clusters"),
+raster = FALSE, label = TRUE, label.size = 8)+ NoLegend()
+dev.off()
+pdf("./results/competition/dimplot_integrated_rpca_res=0.1.pdf", width = 15, height = 6, useDingbats = F)
+DimPlot(sc.combined.rpca_integration, reduction = "umap.rpca", group.by = c("orig.ident", "integrated_rpca_clusters_res.0.1"),
+raster = FALSE, label = TRUE, label.size = 8)+ NoLegend()
+dev.off()
+pdf("./results/competition/dimplot_integrated_rpca_res=0.8.pdf", width = 15, height = 6, useDingbats = F)
+DimPlot(sc.combined.rpca_integration, reduction = "umap.rpca", group.by = c("orig.ident", "integrated_rpca_clusters_res.0.8"),
+raster = FALSE, label = TRUE, label.size = 8)+ NoLegend()
+dev.off()
+saveRDS(sc.tcells, file = "./tmp/competition/sc.combined.after_umap.rpca~without QC.rds")
+saveRDS(sc.combined.rpca_integration, file = "./tmp/competition/sc.combined.after_umap.rpca~without QC.rds")
+?FindVariableGenes
+sc.combined <- readRDS("E:/GitHub/scRNA-seq-code-repository/tmp/competition/sc.combined.rds")
+##########3-2CCA-Integration##########
+# sc.combined[["RNA"]] <- split(sc.combined[["RNA"]], f = sc.combined$orig.ident)
+sc.combined.cca_integration <- NormalizeData(sc.combined)
+sc.combined.cca_integration <- FindVariableGenes(sc.combined.cca_integration)
+?FindVariableGenes
+sc.combined <- readRDS("E:/GitHub/scRNA-seq-code-repository/tmp/competition/sc.combined.rds")
+##########3-2CCA-Integration##########
+# sc.combined[["RNA"]] <- split(sc.combined[["RNA"]], f = sc.combined$orig.ident)
+sc.combined.cca_integration <- NormalizeData(sc.combined)
+sc.combined.cca_integration <- FindVariableFeatures(sc.combined.cca_integration)
+sc.combined.cca_integration <- FindIntegrationAnchors(sc.combined.cca_integration)
+sc.combined <- readRDS("E:/GitHub/scRNA-seq-code-repository/tmp/competition/sc.combined.rds")
+##########3-2CCA-Integration##########
+# sc.combined[["RNA"]] <- split(sc.combined[["RNA"]], f = sc.combined$orig.ident)
+sc.combined.cca_integration <- NormalizeData(sc.combined)
+sc.combined.cca_integration <- FindVariableFeatures(sc.combined.cca_integration)
+sc.combined.cca_integration <- ScaleData(sc.combined.cca_integration)
+sc.combined.cca_integration <- RunPCA(sc.combined.cca_integration)
+sc.combined.cca_integration <- IntegrateLayers(sc.combined.cca_integration,
+method = CCAIntegration,
+orig.reduction = "pca",
+new.reduction = "integrated.cca",
+verbose = F)
+sc.combined.cca_integration[["RNA"]] <- JoinLayers(sc.combined.cca_integration[["RNA"]])
+##########1.Load data##########
+counts.ctrl1<- Read10X("./data/raw/scRNAseq.wsy/Ctrl1_202105/", gene.column = 1)
+# Create Seurat.object indivdually
+sc.ctrl1 <- CreateSeuratObject(counts = counts.ctrl1, project = "Ctrl1", min.cells = 3, min.features = 200)
+View(sc.ctrl1)
+rm(counts.ctrl1, counts.ctrl2, counts.pos1, counts.pos2,
+sc.ctrl1, sc.ctrl2, sc.pos1, sc.pos2)
+sc.combined.cca_integration <- FindNeighbors(sc.combined.cca_integration, reduction = "integrated.cca", dims = 1:30)
+sc.combined.cca_integration <- FindClusters(sc.combined.cca_integration, resolution = 0.1, cluster.name = "integrated_cca_clusters_res.0.1")
+sc.combined.cca_integration <- FindClusters(sc.combined.cca_integration, resolution = 0.8,cluster.name = "integrated_cca_clusters_res.0.8")
+sc.combined.cca_integration <- FindClusters(sc.combined.cca_integration, resolution = 0.1,cluster.name = "integrated_cca_clusters_res.1")
+sc.combined.cca_integration <- RunUMAP(sc.combined.cca_integration, dims = 1:30, reduction = "integrated.cca", reduction.name = "umap.cca")
+# seurat clusters
+pdf("./results/competition/dimplot_integrated_cca.pdf", width = 15, height = 6, useDingbats = F)
+DimPlot(sc.combined.cca_integration, reduction = "umap.cca", group.by = c("orig.ident", "seurat_clusters"),
+raster = FALSE, label = TRUE, label.size = 8)+ NoLegend()
+dev.off()
+# res=0.1
+pdf("./results/competition/dimplot_integrated_cca_res=0.1.pdf", width = 15, height = 6, useDingbats = F)
+DimPlot(sc.combined.cca_integration, reduction = "umap.cca", group.by = c("orig.ident", "integrated_cca_clusters_res.0.1"),
+raster = FALSE, label = TRUE, label.size = 8)+ NoLegend()
+dev.off()
+# res=0.8
+pdf("./results/competition/dimplot_integrated_caa_res=0.8.pdf", width = 15, height = 6, useDingbats = F)
+DimPlot(sc.combined.cca_integration, reduction = "umap.cca", group.by = c("orig.ident", "integrated_cca_clusters_res.0.8"),
+raster = FALSE, label = TRUE, label.size = 8)+ NoLegend()
+dev.off()
+# res=1
+pdf("./results/competition/dimplot_integrated_caa_res=1.pdf", width = 15, height = 6, useDingbats = F)
+DimPlot(sc.combined.cca_integration, reduction = "umap.cca", group.by = c("orig.ident", "integrated_cca_clusters_res.1"),
+raster = FALSE, label = TRUE, label.size = 8)+ NoLegend()
+dev.off()
+sc.combined <- readRDS("E:/GitHub/scRNA-seq-code-repository/tmp/competition/sc.combined.rds")
+##########3-2CCA-Integration##########
+# sc.combined[["RNA"]] <- split(sc.combined[["RNA"]], f = sc.combined$orig.ident)
+sc.combined.cca_integration <- NormalizeData(sc.combined)
+sc.combined.cca_integration <- FindVariableFeatures(sc.combined.cca_integration)
+sc.combined.cca_integration <- ScaleData(sc.combined.cca_integration)
+sc.combined.cca_integration <- RunPCA(sc.combined.cca_integration)
+sc.combined.cca_integration <- IntegrateLayers(sc.combined.cca_integration,
+method = CCAIntegration,
+orig.reduction = "pca",
+new.reduction = "integrated.cca",
+verbose = F)
+sc.combined.cca_integration[["RNA"]] <- JoinLayers(sc.combined.cca_integration[["RNA"]])
+sc.combined.cca_integration <- FindNeighbors(sc.combined.cca_integration, reduction = "integrated.cca", dims = 1:30)
+sc.combined.cca_integration <- FindClusters(sc.combined.cca_integration, resolution = 0.1, cluster.name = "integrated_cca_clusters_res.0.1")
+sc.combined.cca_integration <- FindClusters(sc.combined.cca_integration, resolution = 0.8,cluster.name = "integrated_cca_clusters_res.0.8")
+sc.combined.cca_integration <- FindClusters(sc.combined.cca_integration, resolution = 1,cluster.name = "integrated_cca_clusters_res.1")
+sc.combined.cca_integration <- RunUMAP(sc.combined.cca_integration, dims = 1:30, reduction = "integrated.cca", reduction.name = "umap.cca")
+# seurat clusters
+pdf("./results/competition/dimplot_integrated_cca.pdf", width = 15, height = 6, useDingbats = F)
+DimPlot(sc.combined.cca_integration, reduction = "umap.cca", group.by = c("orig.ident", "seurat_clusters"),
+raster = FALSE, label = TRUE, label.size = 8)+ NoLegend()
+dev.off()
+# res=0.1
+pdf("./results/competition/dimplot_integrated_cca_res=0.1.pdf", width = 15, height = 6, useDingbats = F)
+DimPlot(sc.combined.cca_integration, reduction = "umap.cca", group.by = c("orig.ident", "integrated_cca_clusters_res.0.1"),
+raster = FALSE, label = TRUE, label.size = 8)+ NoLegend()
+dev.off()
+# res=0.8
+pdf("./results/competition/dimplot_integrated_caa_res=0.8.pdf", width = 15, height = 6, useDingbats = F)
+DimPlot(sc.combined.cca_integration, reduction = "umap.cca", group.by = c("orig.ident", "integrated_cca_clusters_res.0.8"),
+raster = FALSE, label = TRUE, label.size = 8)+ NoLegend()
+dev.off()
+# res=1
+pdf("./results/competition/dimplot_integrated_caa_res=1.pdf", width = 15, height = 6, useDingbats = F)
+DimPlot(sc.combined.cca_integration, reduction = "umap.cca", group.by = c("orig.ident", "integrated_cca_clusters_res.1"),
+raster = FALSE, label = TRUE, label.size = 8)+ NoLegend()
+dev.off()
+saveRDS(sc.combined.cca_integration, file = "./tmp/competition/sc.combined.after_umap.cca~without QC.rds")
+##########3-3RPCA-Integration##########
+# sc.tcells[["RNA"]] <- split(sc.tcells[["RNA"]], f = sc.tcells$orig.ident)
+sc.combined.rpca_integration <- NormalizeData(sc.combined)
+sc.combined.rpca_integration <- FindVariableFeatures(sc.combined.rpca_integration)
+sc.combined.rpca_integration <- ScaleData(sc.combined.rpca_integration)
+sc.combined.rpca_integration <- RunPCA(sc.combined.rpca_integration)
+sc.combined.rpca_integration <- IntegrateLayers(sc.combined.rpca_integration,
+method = RPCAIntegration,
+orig.reduction = "pca",
+new.reduction = "integrated.rpca",
+verbose = F,
+)
+sc.combined.rpca_integration[["RNA"]] <- JoinLayers(sc.combined.rpca_integration[["RNA"]])
+sc.combined.rpca_integration <- FindNeighbors(sc.combined.rpca_integration, reduction = "integrated.rpca", dims = 1:30)
+sc.combined.rpca_integration <- FindClusters(sc.combined.rpca_integration, resolution = 0.1, cluster.name = "integrated_rpca_clusters_res.0.1")
+sc.combined.rpca_integration <- FindClusters(sc.combined.rpca_integration, resolution = 0.8,cluster.name = "integrated_rpca_clusters_res.0.8")
+sc.combined.rpca_integration <- FindClusters(sc.combined.rpca_integration, resolution = 1,cluster.name = "integrated_rpca_clusters_res.1")
+sc.combined.rpca_integration <- RunUMAP(sc.combined.rpca_integration, dims = 1:30, reduction = "integrated.rpca", reduction.name = "umap.rpca")
+pdf("./results/competition/dimplot_integrated_rpca.pdf", width = 15, height = 6, useDingbats = F)
+DimPlot(sc.combined.rpca_integration, reduction = "umap.rpca", group.by = c("orig.ident", "seurat_clusters"),
+raster = FALSE, label = TRUE, label.size = 8)+ NoLegend()
+dev.off()
+pdf("./results/competition/dimplot_integrated_rpca_res=0.1.pdf", width = 15, height = 6, useDingbats = F)
+DimPlot(sc.combined.rpca_integration, reduction = "umap.rpca", group.by = c("orig.ident", "integrated_rpca_clusters_res.0.1"),
+raster = FALSE, label = TRUE, label.size = 8)+ NoLegend()
+dev.off()
+pdf("./results/competition/dimplot_integrated_rpca_res=0.8.pdf", width = 15, height = 6, useDingbats = F)
+DimPlot(sc.combined.rpca_integration, reduction = "umap.rpca", group.by = c("orig.ident", "integrated_rpca_clusters_res.0.8"),
+raster = FALSE, label = TRUE, label.size = 8)+ NoLegend()
+dev.off()
+pdf("./results/competition/dimplot_integrated_rpca_res=1.pdf", width = 15, height = 6, useDingbats = F)
+DimPlot(sc.combined.rpca_integration, reduction = "umap.rpca", group.by = c("orig.ident", "integrated_rpca_clusters_res.1"),
+raster = FALSE, label = TRUE, label.size = 8)+ NoLegend()
+dev.off()
+saveRDS(sc.combined.rpca_integration, file = "./tmp/competition/sc.combined.after_umap.rpca~without QC.rds")
+sc.combined <- RenameIdents(object = sc.combined, `Pos1` = "STM_1", `Pos2` = `STM_2`)
+sc.combined <- RenameIdents(object = sc.combined, c(`Pos1` = "STM_1", `Pos2` = `STM_2`))
+sc.combined <- RenameIdents(object = sc.combined, `Pos1` = "STM_1")
+rename_vector <- c("Pos1" = "STM_1", "Pos2" = "STM_2", "Ctrl1" = "Control_1", "Ctrl2" = "Control_2")
+sc.combined <- RenameIdents(object = sc.combined, rename_vector)
+rename_vector <- c("STM_1" = "Pos1", "Pos2" = "STM_2", "Ctrl1" = "Control_1", "Ctrl2" = "Control_2")
+sc.combined <- RenameIdents(object = sc.combined, rename_vector)
+rename_vector <- c("Pos1" = "STM_1", "Pos2" = "STM_2", "Ctrl1" = "Control_1", "Ctrl2" = "Control_2")
+sc.combined <- RenameIdents(object = sc.combined, rename_vector)
+table(sc.combined@meta.data$orig.ident)
+View(sc.combined)
+table(sc.combined$orig.ident)
+print(Idents(sc.combined))
+VlnPlot(sc.combined, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3,
+raster = F, pt.size = 0)
+deng_SCE <- readRDS("tmp/competition/sc.combined.after_umap.rpca~without QC.rds")
+class(deng_SCE)
+table(deng_SCE$cell_type1)
+table(deng_SCE$orig.ident)
+library(dplyr)
+library(monocle3)
+library(Seurat)
+# SCE
+tmp <- readRDS("./tmp/competition/sc.combined.after_umap.rpca~without QC.rds")
+library(monocle3)
+data <- GetAssayData(tmp, assay = "RNA", layer = "counts")
+cell_metadata <- tmp@meta.data
+gene_annotation <- data.frame(gene_short_name = rownames(data))
+rownames(gene_annotation) <- rownames(data)
+cds <- new_cell_data_set(data, cell_metadata = cell_metadata, gene_metadata = gene_annotation)
+cds <- preprocess_cds(cds, num_dim = 10)
+cds <- reduce_dimension(cds)
+SingleCellExperiment::reducedDims(cds)[["UMAP"]] <- tmp@reductions[["umap"]]@cell.embeddings
+library(Seurat)
+library(ggplot2)
+##########1.Load data##########
+tmp <- readRDS("./tmp/competition/sc.combined.after_umap.rpca~without QC.rds")
+##########2.DEGs##########
+# Find DE features
+cluster1.de.markers <- FindMarkers(tmp, ident.1 = NULL, ident.2 = NULL, only.pos = T, min.pct = 0.5)
+View(tmp)
+##########2.DEGs##########
+# Find DE features
+cluster1.de.markers <- FindMarkers(tmp, ident.1 = "1", ident.2 = NULL, only.pos = T, min.pct = 0.5)
+#自定义阈值
+log2FC = 1
+padj = 0.01
+cluster1.de.markers$threshold="ns";
+cluster1.de.markers[which(cluster1.de.markers$avg_log2FC  > log2FC & cluster1.de.markers$p_val_adj <padj),]$threshold="up";
+cluster1.de.markers[which(cluster1.de.markers$avg_log2FC  < (-log2FC) & cluster1.de.markers$p_val_adj < padj),]$threshold="down";
+##########1.Load data##########
+tmp <- readRDS("./tmp/competition/sc.combined.after_umap.rpca~without QC.rds")
+##########2.DEGs##########
+# Find DE features
+cluster1.de.markers <- FindMarkers(tmp, ident.1 = "0", ident.2 = NULL, only.pos = T, min.pct = 0.5)
+#自定义阈值
+log2FC = 1
+padj = 0.01
+cluster1.de.markers$threshold="ns";
+cluster1.de.markers[which(cluster1.de.markers$avg_log2FC  > log2FC & cluster1.de.markers$p_val_adj <padj),]$threshold="up";
+cluster1.de.markers[which(cluster1.de.markers$avg_log2FC  < (-log2FC) & cluster1.de.markers$p_val_adj < padj),]$threshold="down";
+cluster1.de.markers$threshold=factor(cluster1.de.markers$threshold, levels=c('down','ns','up'))
+p1 <- ggplot(data=cluster1.de.markers, aes(x=avg_log2FC, y=-log10(p_val_adj), color=threshold)) +
+geom_point(alpha=0.8, size=0.8) +
+geom_vline(xintercept = c(-log2FC, log2FC), linetype=2, color="grey")+
+geom_hline(yintercept = -log10(padj), linetype=2, color="grey")+
+#labs(title= ifelse(""==title, "", paste("DEG:", title)))+
+xlab(bquote(Log[2]*FoldChange))+
+ylab(bquote(-Log[10]*italic(P.adj)) )+
+theme_classic(base_size = 14) +
+scale_color_manual('',labels=c(paste0("down(",table(cluster1.de.markers$threshold)[[1]],')'),'ns',
+paste0("up(",table(cluster1.de.markers$threshold)[[3]],')' )),
+values=c("blue", "grey","red" ) )+
+guides(color=guide_legend(override.aes = list(size=3, alpha=1)))
+##添加基因名标记###
+data = subset(cluster1.de.markers, cluster1.de.markers$p_val_adj < padj & abs(cluster1.de.markers$avg_log2FC) >= log2FC)
+p2 <- p1 + geom_text_repel(
+data = subset(cluster1.de.markers, cluster1.de.markers$p_val_adj < padj & abs(cluster1.de.markers$avg_log2FC) >= log2FC),
+aes(label = rownames(data)), size = 3,
+box.padding = unit(0.5, "lines"),
+point.padding = unit(0.8,"lines"), segment.color = "black", show.legend = FALSE )
+library(ggrepel)
+##添加基因名标记###
+data = subset(cluster1.de.markers, cluster1.de.markers$p_val_adj < padj & abs(cluster1.de.markers$avg_log2FC) >= log2FC)
+p2 <- p1 + geom_text_repel(
+data = subset(cluster1.de.markers, cluster1.de.markers$p_val_adj < padj & abs(cluster1.de.markers$avg_log2FC) >= log2FC),
+aes(label = rownames(data)), size = 3,
+box.padding = unit(0.5, "lines"),
+point.padding = unit(0.8,"lines"), segment.color = "black", show.legend = FALSE )
+p2
+cluster1.de.genes <- rownames(cluster1.de.markers)
+##########1.Load data##########
+seurat <- readRDS("./tmp/competition/sc.combined.after_umap.rpca~without QC.rds")
+counts <- seurat@assays$RNA@layers$counts
+metadata <- seurat@meta.data
+seurat@active.ident
+metadata$cluster_id <- factor(seurat@active.ident)
+# Create single_cell_experiment.object
+sce <- SingleCellExperiment(assays = list(counts = counts),
+colData = metadata)
+groups <- colData(sce)[, c("cluster_id", "sample_id")]
+colData(sce)
+groups <- colData(sce)[, c("cluster_id", "orig.ident")]
+View(groups)
+groups@listData[["orig.ident"]]
+unique(groups@listData[["orig.ident"]])
+detach("package:ggrepel", unload = TRUE)
+assays(sce)
+dim(counts(sce))
+counts(sce)[1:6, 1:6]
+counts(sce)[1:6, 1:6]
+##########1.Load data##########
+seurat <- readRDS("./tmp/competition/sc.combined.after_umap.rpca~without QC.rds")
+levels(seurat)
+?FindAllMarkers
+##########
+de.markers <- FindAllMarkers(seurat)
+View(de.markers)
+sc.combined <- readRDS("E:/GitHub/scRNA-seq-code-repository/tmp/competition/sc.combined~with QC.rds")
+# find anchors
+anchors <- FindIntegrationAnchors(object.list = sc.combined)
+sc.combined <- readRDS("E:/GitHub/scRNA-seq-code-repository/tmp/competition/sc.combined.after_umap.rpca~without QC.rds")
+# find anchors
+anchors <- FindIntegrationAnchors(object.list = sc.combined)
+sc.combined <- readRDS("E:/GitHub/scRNA-seq-code-repository/tmp/competition/sc.combined~with QC.rds")
+##########3-2CCA-Integration##########
+sc.combined[["RNA"]] <- split(sc.combined[["RNA"]], f = sc.combined$orig.ident)
+sc.combined[[i]] <- FindVariableFeatures(
+sc.combined[[i]], selection.method = "vst",
+nfeatures = 2000, verbose = FALSE
+)
+# Define paths and project names
+data_paths <- list(
+Ctrl1 = "./data/raw/scRNAseq.wsy/Ctrl1_202105/",
+Ctrl2 = "./data/raw/scRNAseq.wsy/Ctrl2_202105/",
+Pos1 = "./data/raw/scRNAseq.wsy/Pos1_202104/",
+Pos2 = "./data/raw/scRNAseq.wsy/Pos2_202105/"
+)
+library(Seurat)
+library(ggplot2)
+# Initialize a list to store Seurat objects
+seurat_objects <- list()
+# Loop over the data paths to read and create Seurat objects
+for (name in names(data_paths)) {
+counts <- Read10X(data_paths[[name]], gene.column = 1)
+seurat_object <- CreateSeuratObject(counts = counts, project = name, min.cells = 3, min.features = 200)
+seurat_objects[[name]] <- seurat_object
+}
+# Merge Seurat objects
+sc.combined <- Reduce(function(x, y) merge(x, y, add.cell.ids = names(seurat_objects)), seurat_objects)
+# Merge Seurat objects
+sc.combined <- merge(seurat_objects[[1]], y = seurat_objects[-1], add.cell.ids = cell_ids)s
+# Extract the names of the Seurat objects
+cell_ids <- names(seurat_objects)
+# Merge Seurat objects
+sc.combined <- merge(seurat_objects[[1]], y = seurat_objects[-1], add.cell.ids = cell_ids)
+# Remove the individual Seurat objects to free up memory
+rm(list = ls(pattern = "^seurat_objects"))
+# Add metadata: percent.mt
+sc.combined[["percent.mt"]] <- PercentageFeatureSet(sc.combined, pattern = "^MT-")
+# Create and save violin plot
+vln_plot <- VlnPlot(sc.combined, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3, raster = FALSE, pt.size = 0)
+VlnPlot(sc.combined, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3, raster = FALSE, pt.size = 0)
+ggsave(filename = "./results/competition/violin_plot2~before QC.png", plot = vln_plot, width = 10, height = 6)
+# Print table of orig.ident
+print(table(sc.combined@meta.data$orig.ident))
+# Print table of orig.ident
+table(sc.combined@meta.data$orig.ident)
+sc.combined[[i]] <- FindVariableFeatures(
+sc.combined[[i]], selection.method = "vst",
+nfeatures = 2000, verbose = FALSE
+)
+View(sc.combined)
+View(seurat_object)
+View(data_paths)
+View(counts)
+View(data_paths)
+data_paths[["Ctrl1"]]
+sc.combined <- readRDS("E:/GitHub/scRNA-seq-code-repository/tmp/competition/sc.combined~with QC.rds")
+features <- SelectIntegrationFeatures(sc.combined)
+##########3-2CCA-Integration##########
+# sc.combined[["RNA"]] <- split(sc.combined[["RNA"]], f = sc.combined$orig.ident)
+sc.combined.cca_integration <- NormalizeData(sc.combined)
+sc.combined.cca_integration <- FindVariableFeatures(sc.combined.cca_integration)
+features <- SelectIntegrationFeatures(sc.combined)
+anchors <- FindIntegrationAnchors(object.list = sc.combined)
+library(Seurat)
+library(dplyr)
+library(monocle3)
+##########
+seurat <- readRDS("./tmp/competition/sc.combined.after_umap.rpca~without QC.rds")
+##########
+# SCE
+DimPlot(tmp, split.by = "scissor")
+##########
+# SCE
+DimPlot(seurat, split.by = "scissor")
+View(seurat)
+seurat@meta.data[["seurat_clusters"]]
+seurat@meta.data[["integrated_rpca_clusters_res.1"]]
+##########
+# SCE
+DimPlot(seurat, split.by = "integrated_rpca_clusters_res.1")
+##########
+# SCE
+DimPlot(seurat)
+counts <- GetAssayData(seurat, assay = "RNA", layer = "counts")
+##########
+sc.combined <- readRDS("./tmp/competition/sc.combined.after_umap.rpca~without QC.rds")
+cds <- as.cell_data_set(sc.combined)
+library(monocle3)
+cds <- as.cell_data_set(sc.combined)
+?sc.combined
+?as.cell_data_set
+？as.cell_data_set
+library(SeuratWrappers)
+install.packages("SeuratWrappers")
+BiocManager::install("SeuratWrappers")
+install.packages("R.utils")

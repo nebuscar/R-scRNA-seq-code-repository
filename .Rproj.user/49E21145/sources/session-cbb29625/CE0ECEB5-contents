@@ -15,7 +15,10 @@ sc.pos2 <- CreateSeuratObject(counts = counts.pos2, project = "Pos2", min.cells 
 
 # merge
 sc.combined <- merge(sc.ctrl1, y = c(sc.ctrl2, sc.pos1, sc.pos2), add.cell.ids = c("Ctrl1", "Ctrl2", "Pos1", "Pos2"))
-# sc.combined <- RenameIdents(object = sc.combined, `Pos1` = "STM_1")
+
+# rename Idents
+# rename_vector <- c("Pos1" = "STM_1", "Pos2" = "STM_2", "Ctrl1" = "Control_1", "Ctrl2" = "Control_2")
+# sc.combined <- RenameIdents(object = sc.combined, rename_vector)
 
 rm(counts.ctrl1, counts.ctrl2, counts.pos1, counts.pos2,
    sc.ctrl1, sc.ctrl2, sc.pos1, sc.pos2)
@@ -27,7 +30,7 @@ vln_plot <- VlnPlot(sc.combined, features = c("nFeature_RNA", "nCount_RNA", "per
 ggsave(filename = "./results/competition/violin_plot~before QC.png", plot = vln_plot, width = 10, height = 6)
 table(sc.combined@meta.data$orig.ident)
 
-saveRDS(sc.combined, "tmp/competition/sc.combined~after QC.rds")
+saveRDS(sc.combined, "tmp/competition/sc.combined~with QC.rds")
 
 ##########2.Quality control##########
 # Done

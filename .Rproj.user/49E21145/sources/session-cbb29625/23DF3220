@@ -1,0 +1,26 @@
+{
+    "id": "23DF3220",
+    "path": "E:/GitHub/scRNA-seq-code-repository/coding/r/competition/05pseudotime.R",
+    "project_path": "coding/r/competition/05pseudotime.R",
+    "type": "r_source",
+    "hash": "400922954",
+    "contents": "",
+    "dirty": false,
+    "created": 1716033824782.0,
+    "source_on_save": false,
+    "relative_order": 2,
+    "properties": {
+        "source_window_id": "",
+        "Source": "Source",
+        "cursorPosition": "5,0",
+        "scrollLine": "0"
+    },
+    "folds": "",
+    "lastKnownWriteTime": 1716034440,
+    "encoding": "UTF-8",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1716034440355,
+    "read_only": false,
+    "read_only_alternatives": []
+}

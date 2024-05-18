@@ -1,0 +1,26 @@
+{
+    "id": "978BDF2A",
+    "path": "E:/GitHub/scRNA-seq-code-repository/coding/r/competition/01-2preprocess.R",
+    "project_path": "coding/r/competition/01-2preprocess.R",
+    "type": "r_source",
+    "hash": "378081088",
+    "contents": "",
+    "dirty": false,
+    "created": 1716035791928.0,
+    "source_on_save": false,
+    "relative_order": 4,
+    "properties": {
+        "source_window_id": "",
+        "Source": "Source",
+        "cursorPosition": "17,76",
+        "scrollLine": "0"
+    },
+    "folds": "",
+    "lastKnownWriteTime": 1716038069,
+    "encoding": "UTF-8",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1716038069479,
+    "read_only": false,
+    "read_only_alternatives": []
+}
