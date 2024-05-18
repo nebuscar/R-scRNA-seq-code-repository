@@ -5,5 +5,4 @@
 *.gz
 *.zip
 tmp/**
-data/raw/sc.data.CGGA/**
-data/raw/TCGA/**
+data/raw/**
