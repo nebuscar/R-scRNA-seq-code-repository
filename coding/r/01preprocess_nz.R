@@ -90,7 +90,7 @@ DimPlot(sc.tcells, reduction = "umap.cca", group.by = c("orig.ident", "integrate
         raster = FALSE, label = TRUE, label.size = 8)+ NoLegend()
 dev.off()
 
-pdf("./results/dimplot_integrated_caa_res=0.8.pdf", width = 15, height = 6, useDingbats = F)
+pdf("./results/dimplot_integrated_cca_res=0.8.pdf", width = 15, height = 6, useDingbats = F)
 DimPlot(sc.tcells, reduction = "umap.cca", group.by = c("orig.ident", "integrated_cca_clusters_res.0.8"),
         raster = FALSE, label = TRUE, label.size = 8)+ NoLegend()
 dev.off()
