@@ -125,11 +125,6 @@ sc.combined.rpca_integration <- FindClusters(sc.combined.rpca_integration, resol
 sc.combined.rpca_integration <- FindClusters(sc.combined.rpca_integration, resolution = 1,cluster.name = "integrated_rpca_clusters_res.1")
 sc.combined.rpca_integration <- RunUMAP(sc.combined.rpca_integration, dims = 1:30, reduction = "integrated.rpca", reduction.name = "umap.rpca")
 
-pdf("./results/competition/dimplot_integrated_rpca.pdf", width = 15, height = 6, useDingbats = F)
-DimPlot(sc.combined.rpca_integration, reduction = "umap.rpca", group.by = c("orig.ident", "seurat_clusters"),
-        raster = FALSE, label = TRUE, label.size = 8)+ NoLegend()
-dev.off()
-
 pdf("./results/competition/dimplot_integrated_rpca_res=0.1.pdf", width = 15, height = 6, useDingbats = F)
 DimPlot(sc.combined.rpca_integration, reduction = "umap.rpca", group.by = c("orig.ident", "integrated_rpca_clusters_res.0.1"),
         raster = FALSE, label = TRUE, label.size = 8)+ NoLegend()
