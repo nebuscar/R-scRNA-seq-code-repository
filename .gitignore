@@ -1,4 +1,5 @@
 *.Rhistory
+<<<<<<< Updated upstream
 .Rproj.user/**
 *.RData
 *.rds
@@ -6,3 +7,10 @@
 *.zip
 tmp/**
 data/raw/**
+=======
+*.Rproj.user
+*.RData
+*.rds
+*.gz
+*.zip
+>>>>>>> Stashed changes
