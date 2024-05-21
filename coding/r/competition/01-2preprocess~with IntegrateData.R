@@ -32,8 +32,8 @@ DefaultAssay(sc.integrated) <- "integrated"
 
 
 # rename Idents
-# rename_vector <- c("Pos1_202104" = "STM_1", "Pos2_202105" = "STM_2", "Ctrl1_202105" = "Control_1", "Ctrl2_202105" = "Control_2")
-# sc.integrated <- RenameIdents(object = sc.integrated, rename_vector)
+rename_vector <- c("Pos1_202104" = "STM_1", "Pos2_202105" = "STM_2", "Ctrl1_202105" = "Ctrl_1", "Ctrl2_202105" = "Ctrl_2")
+sc.integrated <- RenameIdents(object = sc.integrated, rename_vector)
 
 
 ##########3.Standard work flow##########
@@ -53,3 +53,11 @@ DimPlot(sc.integrated, reduction = "umap.integrated", group.by = c("orig.ident",
 dev.off()
 
 saveRDS(sc.integrated, file = "./tmp/competition/sc.integrated.after_umap.cca.rds")
+
+# add metadata:percent.mt
+sc.integrated[["MTpercent"]] <- PercentageFeatureSet( sc.integrated, pattern = "^MT-")
+sc.integrated$MTpercent
+vln_plot <- VlnPlot(sc.integrated, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3, 
+                    raster = F, pt.size = 0)
+ggsave(filename = "./results/competition/violin_plot~before QC.png", plot = vln_plot, width = 10, height = 6)
+table(sc.integrated@meta.data$orig.ident)
