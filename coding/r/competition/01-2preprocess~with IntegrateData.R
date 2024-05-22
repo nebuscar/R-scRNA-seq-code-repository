@@ -25,7 +25,7 @@ for (i in seq_along(seurat_objects)) {
 anchors <- FindIntegrationAnchors(object.list = seurat_objects, dims = 1:30)
 sc.integrated <- IntegrateData(anchorset = anchors, dims = 1:30)
 
-saveRDS(sc.integrated, "tmp/competition/sc.integrated~after IntegrateAnchors.rds")
+saveRDS(sc.integrated, "tmp/competition/sc.integrated.after_IntegrateAnchors.rds")
 
 # Set default Assay:integrated
 DefaultAssay(sc.integrated) <- "integrated"
@@ -52,12 +52,11 @@ DimPlot(sc.integrated, reduction = "umap.integrated", group.by = c("orig.ident",
         raster = FALSE, label = TRUE, label.size = 8)+ NoLegend()
 dev.off()
 
-saveRDS(sc.integrated, file = "./tmp/competition/sc.integrated.after_umap.cca.rds")
+saveRDS(sc.integrated, file = "./tmp/competition/sc.integrated.after_umap.IntegrateData.cca.rds")
 
-# add metadata:percent.mt
-sc.integrated[["MTpercent"]] <- PercentageFeatureSet( sc.integrated, pattern = "^MT-")
-sc.integrated$MTpercent
-vln_plot <- VlnPlot(sc.integrated, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3, 
-                    raster = F, pt.size = 0)
-ggsave(filename = "./results/competition/violin_plot~before QC.png", plot = vln_plot, width = 10, height = 6)
-table(sc.integrated@meta.data$orig.ident)
+# cell number in each cluster
+
+# 
+genes_of_interest <- c("CD2", "CD3G", "CD86")
+vln_plot <- VlnPlot(sc.integrated, features = genes_of_interest, group.by = "orig.ident", pt.size = 0.1)
+ggsave(filename = "./results/competition/gene_expression_violin_plot.png", plot = vln_plot, width = 10, height = 6)

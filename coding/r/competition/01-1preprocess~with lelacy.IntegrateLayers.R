@@ -17,8 +17,8 @@ sc.pos2 <- CreateSeuratObject(counts = counts.pos2, project = "Pos2", min.cells 
 sc.combined <- merge(sc.ctrl1, y = c(sc.ctrl2, sc.pos1, sc.pos2), add.cell.ids = c("Ctrl1", "Ctrl2", "Pos1", "Pos2"))
 
 # rename Idents
-# rename_vector <- c("Pos1" = "STM_1", "Pos2" = "STM_2", "Ctrl1" = "Control_1", "Ctrl2" = "Control_2")
-# sc.combined <- RenameIdents(object = sc.combined, rename_vector)
+rename_vector <- c("Pos1" = "STM_1", "Pos2" = "STM_2", "Ctrl1" = "Control_1", "Ctrl2" = "Control_2")
+sc.combined <- RenameIdents(object = sc.combined, rename_vector)
 
 rm(counts.ctrl1, counts.ctrl2, counts.pos1, counts.pos2,
    sc.ctrl1, sc.ctrl2, sc.pos1, sc.pos2)
@@ -146,5 +146,3 @@ DimPlot(sc.combined.rpca_integration, reduction = "umap.rpca", group.by = c("ori
 dev.off()
 
 saveRDS(sc.combined.rpca_integration, file = "./tmp/competition/sc.combined.after_umap.rpca~without QC.rds")
-
-
