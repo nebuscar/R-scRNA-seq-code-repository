@@ -3,7 +3,7 @@ library(ggplot2)
 library(Seurat)
 devtools::install_github("chuiqin/irGSEA")
 
-sc.nash <- readRDS("./data/scNash_score.rds")
+sc.nash <- readRDS("./data/sc.sub.rds")
 scScore <- data.frame(ucell = sc.nash[["UCell"]]$data, 
                       singscore = sc.nash[["singscore"]]$data, 
                       cluster = sc.nash@meta.data$seurat_clusters)
@@ -58,9 +58,9 @@ p2 <- DimPlot(idents.0.4, reduction = "umap", group.by = "orig.ident",
 p1 + p2
 dev.off()
 
-scScore_sub <- scScore[match(rownames(idents.0.4@meta.data), rownames(scScore)), ]
-idents.0.4@meta.data$scScore_sub <- scScore_sub
-tmp <- idents.0.4@reductions$umap@cell.embeddings
+scScore_sub <- scScore[match(rownames(sc.nash@meta.data), rownames(scScore)), ]
+sc.nash@meta.data$scScore_sub <- scScore_sub
+tmp <- sc.nash@reductions$umap@cell.embeddings
 tmp <- tmp[match(rownames(scScore_sub), rownames(tmp)), ]
 scScore_sub <- cbind(scScore_sub,tmp)
 
@@ -84,13 +84,13 @@ p1+p3
 dev.off()
 
 ##########
-scScore_sub$cluster <- idents.0.4@meta.data$seurat_clusters
+scScore_sub$cluster <- sc.nash@meta.data$seurat_clusters
 pdf("./results/wsy/voilin_score_sub_cluster_singscore.pdf", width = 12, height = 6, useDingbats = F)
 scScore_sub %>%
-  ggplot(aes(x = cluster, y = as.numeric(singscore), color = cluster)) + 
+  ggplot(aes(x = cluster, y = as.numeric(ucell), color = cluster)) + 
   geom_violin(trim = F)+
   geom_boxplot(width=0.1)+
-  theme(axis.text.x = element_text(angle = 45, hjust=1, size = 8),
+  theme(axis.text.x = element_text(angle = 0, hjust=1, size = 8),
         axis.text.y = element_text(angle = 0, hjust=1, size = 8),
         axis.title = element_blank(),
         legend.position="none",
