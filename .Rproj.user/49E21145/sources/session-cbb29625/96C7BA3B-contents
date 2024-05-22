@@ -1,6 +1,0 @@
-library(Seurat)
-
-##########
-seurat <- readRDS("./tmp/competition/sc.combined.after_umap.rpca~without QC.rds")
-
-##########

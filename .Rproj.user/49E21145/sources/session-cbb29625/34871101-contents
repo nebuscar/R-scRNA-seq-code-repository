@@ -1,5 +1,0 @@
-library(Seurat)
-library(ggplot2)
-
-########## 1. Load data ##########
-
