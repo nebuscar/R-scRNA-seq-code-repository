@@ -1,5 +1,5 @@
 *.Rhistory
-.Rproj.user/**
+**/.Rproj.user
 *.RData
 *.rds
 *.gz
