@@ -4,9 +4,13 @@ library(dplyr)
 library(ggrepel)
 
 ##########1.Load data##########
-seurat <- readRDS("./tmp/competition/sc.combined.after_umap.cca~without QC.rds")
+seurat <- readRDS("./tmp/wsy/sc.sub.rds")
 levels(seurat)
-
+FeaturePlot(seurat, features = "Trip6", pt.size = 1, order = T)
+tmp <- seurat@meta.data$seurat_clusters
+tmp[tmp == 1] <- 0
+tmp[tmp == 8] <- 6
+seurat@meta.data$new_cluster <- tmp
 ##########find all markers, report only the positive##########
 de.markers <- FindAllMarkers(seurat, only.pos = T)
 de.markers %>%
@@ -20,15 +24,15 @@ write.csv(top10, "./results/competition/res01_top10gene.csv",
           row.names = TRUE, quote = FALSE)
 
 ##########find markers##########
-de.01_02.markers <- FindMarkers(seurat, ident.1 = 1, ident.2 = 2, only.pos = F, min.pct = 0.5)
-de.01_02.markers %>%
-  dplyr::filter(avg_log2FC > 2) %>%
+de.0_6.markers <- FindMarkers(seurat, ident.1 = 6, ident.2 = 0, only.pos = F, min.pct = 0.2)
+de.0_6.markers %>%
+  dplyr::filter(avg_log2FC > 1.0) %>%
   filter(p_val_adj < 0.01) %>%
   # slice_head(n = 10) %>%
   ungroup() -> top10
-write.csv(de.01_02.markers, "./results/competition/DEGs_res0.1_cluster_01.02.csv", 
+write.csv(de.0_6.markers, "./results/wsy/DEGs_cluster_0_6.csv", 
           row.names = TRUE, quote = FALSE)
-write.csv(top10, "./results/competition/DEGs_res0.1_top10gene_cluster_01.02.csv", 
+write.csv(top10, "./results/wsy/DEGs_cluster_top10_0_6.csv", 
           row.names = TRUE, quote = FALSE)
 
 # setup threshold
@@ -41,6 +45,10 @@ de.01_02.markers$threshold <- "ns"
 # Define the conditions
 up_condition <- which(de.01_02.markers$avg_log2FC > (log2FC) & de.01_02.markers$p_val_adj < padj)
 down_condition <- which(de.01_02.markers$avg_log2FC < (-log2FC) & de.01_02.markers$p_val_adj < padj)
+
+# Debugging: Print the number of rows meeting the conditions
+cat("Number of rows for 'up' condition:", length(up_condition), "\n")
+cat("Number of rows for 'down' condition:", length(down_condition), "\n")
 
 # Assign 'up' and 'down' thresholds
 de.01_02.markers[up_condition,]$threshold <- "up"
@@ -60,14 +68,11 @@ p1 <- ggplot(data=de.01_02.markers, aes(x=avg_log2FC, y=-log10(p_val_adj), color
   scale_color_manual('',labels=c(paste0("down(",table(de.01_02.markers$threshold)[[1]],')'),'ns',
                                  paste0("up(",table(de.01_02.markers$threshold)[[3]],')' )),
                      values=c("blue", "grey","red" ) )+
-  guides(color=guide_legend(override.aes = list(size=3, alpha=1))) +
-  theme(
-    text = element_text(size = 25)
-  )
+  guides(color=guide_legend(override.aes = list(size=3, alpha=1)))
 
 # Subset data for labels
 label_data <- subset(de.01_02.markers, de.01_02.markers$p_val_adj < padj & abs(de.01_02.markers$avg_log2FC) >= log2FC)
-p2 <- p1 + ggrepel::geom_text_repel(
+p2 <- p1 + geom_text_repel(
   data = label_data,
   aes(label = rownames(label_data)), 
   size = 3,
@@ -75,14 +80,7 @@ p2 <- p1 + ggrepel::geom_text_repel(
   point.padding = unit(0.8, "lines"), 
   segment.color = "black", 
   show.legend = FALSE
-) +
-  theme(
-    text = element_text(size = 25)
-  )
-pdf(file = "./results/competition/DEGs_plot_res0.1_IntegrateLayers_cca.pdf", width = 10, height = 6)
-print(p2)
-dev.off()
+)
 
 cluster.01_02.de.genes <- rownames(de.01_02.markers)
 write.csv(cluster.01_02.de.genes, file = "./results/competition/DEGs_res01_cluster_01.02.csv")
-

@@ -4,7 +4,7 @@ library(monocle3)
 library(ggplot2)
 
 ##########
-sc.combined <- readRDS("./tmp/competition/sc.combined.after_umap.cca~without QC.rds")
+sc.combined <- readRDS("./data/sc.sub.rds")
 
 ##########
 # SCE
@@ -16,7 +16,7 @@ cds <- new_cell_data_set(counts, cell_metadata = cell_metadata, gene_metadata = 
 cds <- preprocess_cds(cds, num_dim = 10)
 
 cds <- reduce_dimension(cds)
-SingleCellExperiment::reducedDims(cds)[["UMAP"]] <- sc.combined@reductions$umap.cca@cell.embeddings
+SingleCellExperiment::reducedDims(cds)[["UMAP"]] <- sc.combined@reductions$umap@cell.embeddings
 cds <- cluster_cells(cds)
 cds <- learn_graph(cds)
 
@@ -37,7 +37,4 @@ pseudotime_plot <- plot_cells(cds,
            label_leaves=TRUE,
            label_branch_points=TRUE,
            graph_label_size=5,)
-pseudotime_plot <- pseudotime_plot + theme(text = element_text(size = 20))
-pdf(file = "./results/competition/pseudotime_plot_umap.cca.pdf", width = 10, height = 6)
-print(pseudotime_plot)
-dev.off()
+ggsave(filename = "./results/wsy/pseudotime_plot.png", plot = pseudotime_plot, width = 10, height = 6)

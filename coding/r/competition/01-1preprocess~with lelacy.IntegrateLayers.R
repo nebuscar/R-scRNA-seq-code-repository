@@ -26,8 +26,11 @@ rm(counts.ctrl1, counts.ctrl2, counts.pos1, counts.pos2,
 # add metadata:percent.mt
 sc.combined[["percent.mt"]] <- PercentageFeatureSet(sc.combined, pattern = "^MT-")
 vln_plot <- VlnPlot(sc.combined, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3, 
-        raster = F, pt.size = 0)
-ggsave(filename = "./results/competition/violin_plot~before QC.png", plot = vln_plot, width = 10, height = 6)
+                    raster = F, pt.size = 0, group.by = "orig.ident")
+pdf(file = "./results/competition/violin_plot_with_QC.pdf", width = 10, height = 6)
+print(vln_plot)
+dev.off()
+
 table(sc.combined@meta.data$orig.ident)
 
 saveRDS(sc.combined, "tmp/competition/sc.combined~with QC.rds")
@@ -80,15 +83,15 @@ sc.combined.cca_integration <- FindClusters(sc.combined.cca_integration, resolut
 sc.combined.cca_integration <- FindClusters(sc.combined.cca_integration, resolution = 1,cluster.name = "integrated_cca_clusters_res.1")
 sc.combined.cca_integration <- RunUMAP(sc.combined.cca_integration, dims = 1:30, reduction = "integrated.cca", reduction.name = "umap.cca")
 
-# seurat clusters
-pdf("./results/competition/dimplot_integrated_cca.pdf", width = 15, height = 6, useDingbats = F)
-DimPlot(sc.combined.cca_integration, reduction = "umap.cca", group.by = c("orig.ident", "seurat_clusters"),
+# res=0.1
+pdf("./results/competition/dimplot_integrated_cca_res=0.1.pdf", width = 15, height = 6, useDingbats = F)
+DimPlot(sc.combined.cca_integration, reduction = "umap.cca", group.by = c("orig.ident", "integrated_cca_clusters_res.0.1"),
         raster = FALSE, label = TRUE, label.size = 8)+ NoLegend()
 dev.off()
 
 # res=0.1
-pdf("./results/competition/dimplot_integrated_cca_res=0.1.pdf", width = 15, height = 6, useDingbats = F)
-DimPlot(sc.combined.cca_integration, reduction = "umap.cca", group.by = c("orig.ident", "integrated_cca_clusters_res.0.1"),
+pdf("./results/competition/dimplot_integrated_cca_res=0.1.pdf", width = 10, height = 6, useDingbats = F)
+DimPlot(sc.combined, reduction = "umap.cca", group.by = "integrated_cca_clusters_res.0.1",
         raster = FALSE, label = TRUE, label.size = 8)+ NoLegend()
 dev.off()
 
