@@ -49,37 +49,51 @@ de.01_02.markers[down_condition,]$threshold <- "down"
 # Convert threshold to factor
 de.01_02.markers$threshold <- factor(de.01_02.markers$threshold, levels = c('down', 'ns', 'up'))
 
-p1 <- ggplot(data=de.01_02.markers, aes(x=avg_log2FC, y=-log10(p_val_adj), color=threshold)) +
-  geom_point(alpha=0.8, size=0.8) +
-  geom_vline(xintercept = c(-log2FC, log2FC), linetype=2, color="grey")+
-  geom_hline(yintercept = -log10(padj), linetype=2, color="grey")+
-  #labs(title= ifelse(""==title, "", paste("DEG:", title)))+
-  xlab(bquote(Log[2]*FoldChange))+
-  ylab(bquote(-Log[10]*italic(P.adj)) )+
+p1 <- ggplot(data = de.01_02.markers, aes(x = avg_log2FC, y = -log10(p_val_adj), color = threshold)) +
+  geom_point(alpha = 0.8, size = 0.8) +
+  geom_vline(xintercept = c(-log2FC, log2FC), linetype = 2, color = "grey") +
+  geom_hline(yintercept = -log10(padj), linetype = 2, color = "grey") +
+  xlab(bquote(Log[2] * FoldChange)) +
+  ylab(bquote(-Log[10] * italic(P.adj))) +
   theme_classic(base_size = 14) +
-  scale_color_manual('',labels=c(paste0("down(",table(de.01_02.markers$threshold)[[1]],')'),'ns',
-                                 paste0("up(",table(de.01_02.markers$threshold)[[3]],')' )),
-                     values=c("blue", "grey","red" ) )+
-  guides(color=guide_legend(override.aes = list(size=3, alpha=1))) +
+  scale_color_manual(
+    '',
+    labels = c(paste0("down(", table(de.01_02.markers$threshold)[[1]], ')'), 'ns', paste0("up(", table(de.01_02.markers$threshold)[[3]], ')')),
+    values = c("blue", "grey", "red")
+  ) +
+  guides(color = guide_legend(override.aes = list(size = 3, alpha = 1))) +
   theme(
-    text = element_text(size = 25)
+    text = element_text(size = 20),
+    axis.title.x = element_text(size = 24, face = "bold"),  # Increase axis title size
+    axis.title.y = element_text(size = 24, face = "bold"),  # Increase axis title size
+    axis.text.x = element_text(size = 20),
+    axis.text.y = element_text(size = 20),
+    legend.text = element_text(size = 15)
   )
 
 # Subset data for labels
 label_data <- subset(de.01_02.markers, de.01_02.markers$p_val_adj < padj & abs(de.01_02.markers$avg_log2FC) >= log2FC)
+
+# Add labels to the plot
 p2 <- p1 + ggrepel::geom_text_repel(
   data = label_data,
   aes(label = rownames(label_data)), 
-  size = 3,
+  size = 5,
   box.padding = unit(0.5, "lines"),
   point.padding = unit(0.8, "lines"), 
   segment.color = "black", 
-  show.legend = FALSE
+  show.legend = FALSE,
+  max.overlaps = 10
 ) +
   theme(
-    text = element_text(size = 25)
+    text = element_text(size = 20),
+    axis.title.x = element_text(size = 24, face = "bold"),  # Increase axis title size
+    axis.title.y = element_text(size = 24, face = "bold"),  # Increase axis title size
+    axis.text.x = element_text(size = 20),
+    axis.text.y = element_text(size = 20),
+    legend.text = element_text(size = 15)
   )
-pdf(file = "./results/competition/DEGs_plot_res0.1_IntegrateLayers_cca.pdf", width = 10, height = 6)
+pdf(file = "./results/competition/figure2/DEGs_plot_res0.1_IntegrateLayers_cca.pdf", width = 10, height = 10)
 print(p2)
 dev.off()
 

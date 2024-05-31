@@ -1,7 +1,9 @@
 library(Seurat)
 library(dplyr)
+devtools::install_github('cole-trapnell-lab/monocle3')
 library(monocle3)
 library(ggplot2)
+library(showtext)
 
 ##########
 sc.combined <- readRDS("./tmp/competition/sc.combined.after_umap.cca~without QC.rds")
@@ -36,8 +38,18 @@ pseudotime_plot <- plot_cells(cds,
            label_cell_groups=FALSE,
            label_leaves=TRUE,
            label_branch_points=TRUE,
-           graph_label_size=5,)
+           graph_label_size=8,)
+showtext_auto()
+pseudotime_plot <- pseudotime_plot &
+  theme(
+    axis.title.x = element_text(size = 20, family = "Arial"),
+    axis.title.y = element_text(size = 20, family = "Arial"),
+    axis.text.x = element_text(size = 20, family = "Arial"),
+    axis.text.y = element_text(size = 20, family = "Arial")
+  )
+
 pseudotime_plot <- pseudotime_plot + theme(text = element_text(size = 20))
-pdf(file = "./results/competition/pseudotime_plot_umap.cca.pdf", width = 10, height = 6)
+pdf(file = "./results/competition/figure2/pseudotime_plot_umap.cca.pdf", width = 10, height = 5)
 print(pseudotime_plot)
 dev.off()
+showtext_auto(FALSE)

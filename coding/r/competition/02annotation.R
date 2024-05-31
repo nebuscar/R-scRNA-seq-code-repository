@@ -27,16 +27,16 @@ bar_plot <- ggplot(cluster_counts_long, aes(x = factor(cluster), y = cell_count,
   theme_minimal() +
   theme(
     axis.line = element_line(color = "black"),
-    axis.text = element_text(size = 30), 
-    axis.title.x = element_text(size = 30),
-    axis.title.y = element_text(size = 30),
+    axis.text = element_text(size = 20), 
+    axis.title.x = element_text(size = 20),
+    axis.title.y = element_text(size = 20),
     legend.position = "right",
-    legend.text = element_text(size = 30),
-    legend.title = element_text(size = 30)
+    legend.text = element_text(size = 15),
+    legend.title = element_text(size = 15)
   ) +
-  guides(fill = guide_legend(title = "Recovery Status", title.position = "top", title.theme = element_text(size = 30)))
+  guides(fill = guide_legend(title = "Recovery Status", title.position = "top", title.theme = element_text(size = 15)))
 
-pdf(file = "./results/competition/bar_plot_cluster_cell_counts_cca.pdf", width = 10, height = 6)
+pdf(file = "./results/competition/figure1/bar_plot_cluster_cell_counts_cca.pdf", width = 5, height = 5)
 print(bar_plot)
 dev.off()
 
@@ -53,13 +53,15 @@ vln_plot <- ggplot(expression_data_long, aes(x = factor(seurat_clusters), y = ex
   scale_fill_manual(values = custom_colors) +
   labs(x = "Seurat Clusters", y = "Expression") +
   theme(
-    text = element_text(size = 30),
+    text = element_text(size = 20),
+    axis.title = element_text(size = 20),    # 坐标轴标题字体大小
+    axis.text = element_text(size = 20),     # 坐标轴刻度标签字体大小
     panel.background = element_rect(fill = "white", color = NA), 
     axis.line = element_line(color = "black"),
     plot.title = element_text(hjust = 0.5),
     legend.position = "right",
     legend.title = element_blank()
   )
-pdf(file = "./results/competition/violin_plot_gene_expression.pdf", width = 10, height = 6)
+pdf(file = "./results/competition/figure1/violin_plot_gene_expression.pdf", width = 5, height = 5)
 print(vln_plot)
 dev.off()

@@ -25,11 +25,18 @@ rm(counts.ctrl1, counts.ctrl2, counts.pos1, counts.pos2,
 
 # add metadata:percent.mt
 sc.combined[["percent.mt"]] <- PercentageFeatureSet(sc.combined, pattern = "^MT-")
-vln_plot <- VlnPlot(sc.combined, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3, 
-                    raster = F, pt.size = 0, group.by = "orig.ident")
-pdf(file = "./results/competition/violin_plot_with_QC.pdf", width = 10, height = 6)
+library(showtext)
+font_add("Arial", regular = "C:/Users/nebuscar/Downloads/arial/ARIAL.TTF")
+showtext_auto()
+vln_plot <- VlnPlot(sc.combined, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), 
+                    ncol = 3, raster = F, pt.size = 0, group.by = "orig.ident") & 
+  theme(text = element_text(size = 20, family = "Arial"),
+        axis.title = element_text(size = 20, family = "Arial"),
+        axis.text = element_text(size = 20, family = "Arial"))
+pdf(file = "./results/competition/figure1/violin_plot_with_QC.pdf", width = 15, height = 5)
 print(vln_plot)
 dev.off()
+showtext_auto(FALSE)
 
 table(sc.combined@meta.data$orig.ident)
 
@@ -84,16 +91,23 @@ sc.combined.cca_integration <- FindClusters(sc.combined.cca_integration, resolut
 sc.combined.cca_integration <- RunUMAP(sc.combined.cca_integration, dims = 1:30, reduction = "integrated.cca", reduction.name = "umap.cca")
 
 # res=0.1
-pdf("./results/competition/dimplot_integrated_cca_res=0.1.pdf", width = 15, height = 6, useDingbats = F)
+pdf("./results/competition/figure1/dimplot_integrated_cca_res=0.1.pdf", width = 5, height = 5, useDingbats = F)
+showtext_auto()
 DimPlot(sc.combined.cca_integration, reduction = "umap.cca", group.by = c("orig.ident", "integrated_cca_clusters_res.0.1"),
         raster = FALSE, label = TRUE, label.size = 8)+ NoLegend()
 dev.off()
+showtext_auto(FALSE)
 
 # res=0.1
-pdf("./results/competition/dimplot_integrated_cca_res=0.1.pdf", width = 10, height = 6, useDingbats = F)
+pdf("./results/competition/figure1/dimplot_integrated_cca_res=0.1.pdf", width = 5, height = 5, useDingbats = F)
+showtext_auto()
 DimPlot(sc.combined, reduction = "umap.cca", group.by = "integrated_cca_clusters_res.0.1",
-        raster = FALSE, label = TRUE, label.size = 8)+ NoLegend()
+        raster = FALSE, label = TRUE, label.size = 8)+ NoLegend()& 
+  theme(text = element_text(size = 15, family = "Arial"),
+        axis.title = element_text(size = 15, family = "Arial"),
+        axis.text = element_text(size = 15, family = "Arial"))
 dev.off()
+showtext_auto(FALSE)
 
 # res=0.8
 pdf("./results/competition/dimplot_integrated_cca_res=0.8.pdf", width = 15, height = 6, useDingbats = F)
