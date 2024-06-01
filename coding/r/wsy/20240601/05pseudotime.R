@@ -1,27 +1,27 @@
+library(Seurat)
 library(dplyr)
 library(monocle3)
-library(Seurat)
-
+library(ggplot2)
 
 ##########
-sc.combined <- readRDS("./tmp/competition/sc.combined.after_umap.cca~without QC.rds")
+hsc <- readRDS("./tmp/wsy/")
 
 ##########
 # SCE
-data <- GetAssayData(tmp, assay = "RNA", layer = "counts")
-cell_metadata <- tmp@meta.data
-gene_annotation <- data.frame(gene_short_name = rownames(data))
-rownames(gene_annotation) <- rownames(data)
-cds <- new_cell_data_set(data, cell_metadata = cell_metadata, gene_metadata = gene_annotation)
+counts <- GetAssayData(sc.combined, assay = "RNA", layer = "counts")
+cell_metadata <- sc.combined@meta.data
+gene_annotation <- data.frame(gene_short_name = rownames(counts))
+rownames(gene_annotation) <- rownames(counts)
+cds <- new_cell_data_set(counts, cell_metadata = cell_metadata, gene_metadata = gene_annotation)
 cds <- preprocess_cds(cds, num_dim = 10)
 
 cds <- reduce_dimension(cds)
-SingleCellExperiment::reducedDims(cds)[["UMAP"]] <- tmp@reductions[["umap"]]@cell.embeddings
+SingleCellExperiment::reducedDims(cds)[["UMAP"]] <- sc.combined@reductions$umap@cell.embeddings
 cds <- cluster_cells(cds)
 cds <- learn_graph(cds)
 
 get_earliest_principal_node <- function(cds, time_bin){
-#  cell_ids <- which(colData(cds)[, "orig.ident"] == time_bin)
+  #  cell_ids <- which(colData(cds)[, "orig.ident"] == time_bin)
   closest_vertex <- cds@principal_graph_aux[["UMAP"]]$pr_graph_cell_proj_closest_vertex
   closest_vertex <- as.matrix(closest_vertex[colnames(cds), ])
   root_pr_nodes <-
@@ -31,9 +31,12 @@ get_earliest_principal_node <- function(cds, time_bin){
 
 cds <- order_cells(cds, root_pr_nodes = get_earliest_principal_node(cds))
 
-plot_cells(cds,
+pseudotime_plot <- plot_cells(cds,
            color_cells_by = "pseudotime",
            label_cell_groups=FALSE,
            label_leaves=TRUE,
            label_branch_points=TRUE,
            graph_label_size=5,)
+pdf("./results/wsy/20240531/pseudotime_plot.pdf", width = 10, height = 6)
+print(pseudotime_plot)
+dev.off()
