@@ -6,4 +6,4 @@
 *.zip
 tmp/**
 data/raw/**
-.Rproj.user
+.Rproj.user/**
