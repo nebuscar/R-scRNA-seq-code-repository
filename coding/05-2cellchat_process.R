@@ -8,7 +8,7 @@ library(Seurat)
 ################################################################################
 # Load dataset
 ################################################################################
-sc.raw <- readRDS("tmp/sc.common_glioma_counts.matrix.rds")
+sc.raw <- readRDS("./tmp/sc.common_glioma_counts.matrix.rds")
 sc.raw.meta <- readRDS("tmp/sc.meta_sub_sub_annotation+scissor.rds")
 ###################################### optical: randomly sample
 # # random sub-sample
@@ -24,7 +24,7 @@ cellchat <- createCellChat(sc.raw,
                            group.by = "annotation_cluster",
                            # group.by = "scissor_tcells",
                            )
-cellchat@DB <- CellChatDB.human
+cellchat@DB <- CellChatDB.mouse
 cellchat <- subsetData(cellchat) # This step is necessary even if using the whole database
 #future::plan("multisession", workers = 10)                                    # do parallel
 cellchat <- identifyOverExpressedGenes(cellchat)
